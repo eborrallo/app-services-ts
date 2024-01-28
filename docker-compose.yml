@@ -1,0 +1,102 @@
+version: '3.8'
+
+x-app-service: &default-app
+  build: .
+  command: ''
+  depends_on:
+    - mongo
+    - postgres
+    - rabbitmq
+    - s3.docker.test
+  volumes:
+    - .:/code:delegated
+    - node_modules:/code/node_modules:delegated
+
+
+services:
+  mongo:
+    image: mongo:5.0.0
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/dev
+    volumes:
+      - ./data/mongo:/data/db:delegated
+    ports:
+      - 27017:27017
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=user
+      - POSTGRES_DB=auth
+    ports:
+      - '5432:5432'
+    restart: always
+  rabbitmq:
+    image: 'rabbitmq:3.8-management'
+    ports:
+      - 5672:5672
+      - 15672:15672
+  s3.docker.test:
+    build:
+      context: ./docker/s3-storage
+      dockerfile: Dockerfile
+    entrypoint:
+      - /start.sh
+    ports:
+      - 8000:8000
+    environment:
+      - ENDPOINT=http://s3.docker.test:8000
+      - LISTEN_ADDR=0.0.0.0
+      - S3BACKEND=mem
+
+#  krakend:
+#    image: devopsfaith/krakend:watch
+#    depends_on:
+#      - auth-service
+#      - storage-service
+#    ports:
+#      - 3001:3001
+#    volumes:
+#      - "./docker/krakend/:/etc/krakend/"
+#    command: [ "run","-c","krakend.json" ]
+#
+#  auth-service:
+#    <<: *default-app
+#    container_name: auth-service
+#    command: bash -c "npm run build && npm run start:auth:api"
+#    ports:
+#      - "3000"
+#    environment:
+#      - PORT=3000
+#      - MONGO_URL=mongodb://mongo:27017/auth-dev
+#      - TYPEORM_HOST=postgres
+#      - RABBITMQ_HOSTNAME=rabbitmq
+#
+#  storage-service:
+#    <<: *default-app
+#    container_name: storage-service
+#    command: bash -c "npm run build && npm run start:storage:api"
+#    ports:
+#      - "2999"
+#    environment:
+#      - PORT=2999
+#      - MONGO_URL=mongodb://mongo:27017/auth-dev
+#      - TYPEORM_HOST=postgres
+#      - RABBITMQ_HOSTNAME=rabbitmq
+#      - S3_ENDPOINT=http://s3.docker.test:8000
+#
+#  notifier-service:
+#    <<: *default-app
+#    container_name: notifier-service
+#    command: bash -c "npm run build && npm run start:notifier:monitor"
+#    environment:
+#      - MONGO_URL=mongodb://mongo:27017/auth-dev
+#      - TYPEORM_HOST=postgres
+#      - RABBITMQ_HOSTNAME=rabbitmq
+
+
+volumes:
+  node_modules:
+  esdata:
+    driver: local
+

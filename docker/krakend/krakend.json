@@ -1,0 +1,96 @@
+{
+  "version": 3,
+  "extra_config": {
+    "github_com/devopsfaith/krakend-cors": {
+      "allow_origins": ["*"],
+      "allow_headers": ["*"],
+      "expose_headers": ["Content-Length"],
+      "max_age": "12h",
+      "allow_methods": ["GET", "HEAD", "POST"]
+    }
+  },
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "name": "Gateway",
+  "port": 3001,
+  "endpoints": [
+    {
+      "endpoint": "/auth/{address}/message",
+      "method": "GET",
+      "output_encoding": "json",
+      "extra_config": {},
+      "backend": [
+        {
+          "url_pattern": "/auth/{address}/message",
+          "host": ["http://auth-service:3000"],
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/auth/{address}/validate",
+      "method": "POST",
+      "output_encoding": "json",
+      "extra_config": {},
+      "backend": [
+        {
+          "url_pattern": "/auth/{address}/validate",
+          "host": ["http://auth-service:3000"],
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/storage/upload",
+      "method": "POST",
+      "output_encoding": "json",
+      "extra_config": {},
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "url_pattern": "/storage/upload",
+          "host": ["http://storage-service:2999"],
+          "method": "POST"
+        }
+      ]
+    },{
+      "endpoint": "/storage/retrieve/{id}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {},
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "url_pattern": "/storage/retrieve/{id}",
+          "host": ["http://storage-service:2999"],
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/health",
+      "method": "GET",
+      "output_encoding": "json",
+      "extra_config": {
+        "github.com/devopsfaith/krakend/proxy": {
+          "static": {
+            "data": {
+              "status": "OK"
+            },
+            "strategy": "always"
+          }
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/fake",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
+          "extra_config": {}
+        }
+      ]
+    }
+  ]
+}

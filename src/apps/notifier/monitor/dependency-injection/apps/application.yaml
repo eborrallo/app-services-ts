@@ -1,0 +1,11 @@
+services:
+  NotifyOnDocumentUploaded:
+    class: ../../../../../Contexts/Notifier/Internal/application/NotifyOnDocumentUploaded
+    arguments: ['@Shared.Logger']
+    tags:
+      - { name: 'domainEventSubscriber' }
+  NotifyOnUserCreated:
+    class: ../../../../../Contexts/Notifier/Internal/application/NotifyOnUserCreated
+    arguments: ['@Shared.Logger']
+    tags:
+      - { name: 'domainEventSubscriber' }

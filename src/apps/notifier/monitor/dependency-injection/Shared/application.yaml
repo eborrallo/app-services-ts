@@ -1,0 +1,48 @@
+services:
+  Shared.Logger:
+    class: ../../../../../Contexts/Shared/infrastructure/WinstonLogger
+    arguments: []
+
+  Notifier.Shared.TypeOrmConfig:
+    factory:
+      class: ../../../../../Contexts/Auth/User/infrastructure/persistence/TypeOrmConfigFactory
+      method: 'createConfig'
+
+  Notifier.Shared.ConnectionManager:
+    factory:
+      class: ../../../../../Contexts/Shared/infrastructure/persistence/typeorm/TypeOrmClientFactory
+      method: 'createClient'
+    arguments: ['notifier', '@Notifier.Shared.TypeOrmConfig']
+
+  Notifier.Shared.RabbitMQConfig:
+    factory:
+      class: ../../../../../Contexts/Storage/Document/infrastructure/RabbitMQ/RabbitMQConfigFactory
+      method: 'createConfig'
+
+  Notifier.Shared.domain.EventBus:
+    factory:
+      class: ../../../../../Contexts/Shared/infrastructure/EventBus/RabbitMQ/RabbitMQEventBusFactory
+      method: 'create'
+    arguments:
+      [
+        '@Notifier.Shared.DomainEventFailoverPublisher',
+        '@Notifier.Shared.RabbitMQConnection',
+        '@Notifier.Shared.RabbitMQQueueFormatter',
+        '@Notifier.Shared.RabbitMQConfig'
+      ]
+
+  Notifier.Shared.RabbitMQQueueFormatter:
+    class: ../../../../../Contexts/Shared/infrastructure/EventBus/RabbitMQ/RabbitMQQueueFormatter
+    arguments: ['notifier']
+
+  Notifier.Shared.RabbitMQConnection:
+    class: ../../../../../Contexts/Shared/infrastructure/EventBus/RabbitMQ/RabbitMQConnection
+    arguments: ['@Notifier.Shared.RabbitMQConfig']
+
+  Notifier.Shared.RabbitMQQueueFormatter:
+    class: ../../../../../Contexts/Shared/infrastructure/EventBus/RabbitMQ/RabbitMQQueueFormatter
+    arguments: ['notifier']
+
+  Notifier.Shared.DomainEventFailoverPublisher:
+    class: ../../../../../Contexts/Shared/infrastructure/EventBus/DomainEventFailoverPublisher/DomainEventFailoverPublisher
+    arguments: ['@Notifier.Shared.ConnectionManager']

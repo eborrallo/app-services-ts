@@ -1,0 +1,51 @@
+services:
+  Web3MessageController:
+    class: ../../controllers/Web3MessageController
+    arguments: ['@Auth.Shared.domain.CommandBus']
+  OAuthValidateController:
+    class: ../../controllers/OAuthValidateController
+    arguments: []
+  OAuthMiddleware:
+    class: ../../middlewares/OAuthMiddleware
+    arguments: ['@AuthGuard']
+  AuthGuard:
+    class: ../../../../../Contexts/Auth/User/application/guard/AuthGuard
+    arguments: ['@AuthValidation']
+  AuthValidation:
+    class: ../../../../../Contexts/Auth/User/infrastructure/apis/Firebase
+    arguments: ['@Firebase']
+  Firebase:
+    class: ../../../../../Contexts/Auth/User/infrastructure/apis/Firebase
+    arguments: ['@Auth.Shared.Firebase']
+
+  Web3ValidateMessageController:
+    class: ../../controllers/Web3ValidateMessageController
+    arguments: ['@Auth.Shared.domain.CommandBus', '@Auth.Shared.domain.QueryBus', '@Shared.Logger']
+
+  StoreAuthMessageCommandHandler:
+    class: ../../../../../Contexts/Auth/User/application/commands/StoreAuthMessage/StoreAuthMessageCommandHandler
+    arguments: ['@UserRepository', '@Auth.Shared.domain.EventBus']
+    tags:
+      - { name: 'commandHandler' }
+  VerifyMessageCommandHandler:
+    class: ../../../../../Contexts/Auth/User/application/commands/VerifyMessage/VerifyMessageCommandHandler
+    arguments: ['@UserRepository', '@SignatureVerificator', '@JwtGenerator']
+    tags:
+      - { name: 'commandHandler' }
+  GetAuthTokenQueryHandler:
+    class: ../../../../../Contexts/Auth/User/application/queries/GetAuthToken/GetAuthTokenQueryHandler
+    arguments: ['@UserRepository']
+    tags:
+      - { name: 'queryHandler' }
+  UserRepository:
+    class: ../../../../../Contexts/Auth/User/infrastructure/persistence/TypeOrmUserRepository
+    arguments: ['@Auth.Shared.ConnectionManager']
+  SignatureVerificator:
+    class: ../../../../../Contexts/Auth/User/domain/services/SignatureVerificator
+    arguments: ['@EthersProvider']
+  JwtGenerator:
+    class: ../../../../../Contexts/Auth/User/domain/services/JwtGenerator
+  EthersProvider:
+    factory:
+      class: ../../../../../Contexts/Auth/User/infrastructure/apis/Alchemy
+      method: 'get'

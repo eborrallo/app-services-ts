@@ -1,0 +1,75 @@
+services:
+  Shared.Logger:
+    class: ../../../../../Contexts/Shared/infrastructure/WinstonLogger
+    arguments: []
+
+  Auth.Shared.MongoConfig:
+    factory:
+      class: ../../../../../Contexts/Auth/User/infrastructure/persistence/MongoConfigFactory
+      method: 'createConfig'
+
+  #  Auth.Shared.ConnectionManager:
+  #    factory:
+  #      class: ../../../../../Contexts/Shared/infrastructure/persistence/mongo/MongoClientFactory
+  #      method: 'createClient'
+  #    arguments: ['backoffice', '@Auth.Shared.MongoConfig']
+
+  Auth.Shared.TypeOrmConfig:
+    factory:
+      class: ../../../../../Contexts/Auth/User/infrastructure/persistence/TypeOrmConfigFactory
+      method: 'createConfig'
+
+  Auth.Shared.ConnectionManager:
+    factory:
+      class: ../../../../../Contexts/Shared/infrastructure/persistence/typeorm/TypeOrmClientFactory
+      method: 'createClient'
+    arguments: ['auth', '@Auth.Shared.TypeOrmConfig']
+
+  Auth.Shared.CommandHandlers:
+    class: ../../../../../Contexts/Shared/infrastructure/CommandBus/CommandHandlers
+    arguments: ['!tagged commandHandler']
+
+  Auth.Shared.domain.CommandBus:
+    class: ../../../../../Contexts/Shared/infrastructure/CommandBus/InMemoryCommandBus
+    arguments: ['@Auth.Shared.CommandHandlers']
+
+  Auth.Shared.RabbitMQConfig:
+    factory:
+      class: ../../../../../Contexts/Storage/Document/infrastructure/RabbitMQ/RabbitMQConfigFactory
+      method: 'createConfig'
+
+  Auth.Shared.domain.EventBus:
+    factory:
+      class: ../../../../../Contexts/Shared/infrastructure/EventBus/RabbitMQ/RabbitMQEventBusFactory
+      method: 'create'
+    arguments:
+      [
+        '@Auth.Shared.DomainEventFailoverPublisher',
+        '@Auth.Shared.RabbitMQConnection',
+        '@Auth.Shared.RabbitMQQueueFormatter',
+        '@Auth.Shared.RabbitMQConfig'
+      ]
+
+  Auth.Shared.RabbitMQQueueFormatter:
+    class: ../../../../../Contexts/Shared/infrastructure/EventBus/RabbitMQ/RabbitMQQueueFormatter
+    arguments: ['auth']
+
+  Auth.Shared.RabbitMQConnection:
+    class: ../../../../../Contexts/Shared/infrastructure/EventBus/RabbitMQ/RabbitMQConnection
+    arguments: ['@Auth.Shared.RabbitMQConfig']
+
+  Auth.Shared.RabbitMQQueueFormatter:
+    class: ../../../../../Contexts/Shared/infrastructure/EventBus/RabbitMQ/RabbitMQQueueFormatter
+    arguments: ['auth']
+
+  Auth.Shared.DomainEventFailoverPublisher:
+    class: ../../../../../Contexts/Shared/infrastructure/EventBus/DomainEventFailoverPublisher/DomainEventFailoverPublisher
+    arguments: ['@Auth.Shared.ConnectionManager']
+
+  Auth.Shared.QueryHandlers:
+    class: ../../../../../Contexts/Shared/infrastructure/QueryBus/QueryHandlers
+    arguments: ['!tagged queryHandler']
+
+  Auth.Shared.domain.QueryBus:
+    class: ../../../../../Contexts/Shared/infrastructure/QueryBus/InMemoryQueryBus
+    arguments: ['@Auth.Shared.QueryHandlers']

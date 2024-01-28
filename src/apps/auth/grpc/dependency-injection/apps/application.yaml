@@ -1,0 +1,4 @@
+services:
+  AuthServices:
+    class: ../../services/AuthServices
+    arguments: ['@Auth.Shared.domain.QueryBus']

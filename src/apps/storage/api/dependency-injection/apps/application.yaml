@@ -1,0 +1,25 @@
+services:
+  RetrieveDocumentController:
+    class: ../../controllers/RetrieveDocumentController
+    arguments: ['@Storage.Shared.domain.QueryBus']
+
+  UploadDocumentController:
+    class: ../../controllers/UploadDocumentController
+    arguments: ['@Storage.Shared.domain.CommandBus']
+  UploadDocumentCommandHandler:
+    class: ../../../../../Contexts/Storage/Document/application/Upload/UploadDocumentCommandHandler
+    arguments: ['@Storage', '@Storage.Shared.domain.EventBus']
+    tags:
+      - { name: 'commandHandler' }
+  RetrieveDocumentQueryHandler:
+    class: ../../../../../Contexts/Storage/Document/application/Retrieve/RetrieveDocumentQueryHandler
+    arguments: ['@Storage']
+    tags:
+      - { name: 'queryHandler' }
+  Storage:
+    class: ../../../../../Contexts/Storage/Document/infrastructure/storages/S3Storage
+    arguments: ['@S3Client', '@Storage.Shared.domain.EventBus', '@Storage.Shared.ConnectionManager']
+  S3Client:
+    factory:
+      class: ../../../../../Contexts/Storage/Document/infrastructure/storages/S3ClientFactory
+      method: 'create'

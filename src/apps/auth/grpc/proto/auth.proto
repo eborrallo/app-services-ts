@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package users;
+
+import "google/protobuf/wrappers.proto";
+
+message AuthRequest {
+  string hash = 1;
+}
+
+service Auth {
+  rpc Verify(AuthRequest) returns (google.protobuf.BoolValue) {};
+}
