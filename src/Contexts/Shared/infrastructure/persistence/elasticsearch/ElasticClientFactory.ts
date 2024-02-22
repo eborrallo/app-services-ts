@@ -1,4 +1,4 @@
-import { Client as ElasticClient } from '@elastic/elasticsearch';
+import { Client as ElasticClient } from '@opensearch-project/opensearch';
 import { Nullable } from '../../../domain/Nullable';
 import ElasticConfig from './ElasticConfig';
 

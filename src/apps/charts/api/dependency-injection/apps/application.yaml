@@ -1,0 +1,19 @@
+services:
+  InitImportCommandHandler:
+    class: ../../../../../Contexts/Inbound/Discord/application/InitImportCommandHandler
+    arguments: ['@Fetcher','@ElasticMessageRepositroy']
+    tags:
+    - { name: 'commandHandler' }
+
+  DiscordClient:
+    factory:
+      class: ../../../../../Contexts/Inbound/Discord/infrastructure/Discord/DiscordClientFactory
+      method: 'create'
+
+  Fetcher:
+    class: ../../../../../Contexts/Inbound/Discord/domain/services/ServerDataFetcher
+    arguments: ['@DiscordClient']
+
+  ElasticMessageRepositroy:
+    class: ../../../../../Contexts/Inbound/Discord/infrastructure/persistence/ElasticMessageRepositroy
+    arguments: ['@Shared.ElasticConnectionManager', '@Shared.ElasticConfig']
