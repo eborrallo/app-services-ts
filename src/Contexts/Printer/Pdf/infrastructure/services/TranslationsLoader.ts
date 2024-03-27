@@ -4,14 +4,15 @@ import i18next from 'i18next';
 
 export class TranslationsLoader {
   async locale(templateName: string) {
-    const files = fs.readdirSync(path.join('client/templates/', templateName, '/locales'));
+    const dir=path.join(__dirname, '..', '..', 'domain', 'templates', templateName, 'locales')
+    const files = fs.readdirSync(dir);
     let resources = {};
     files.forEach((file) => {
       const language = file.split('.')[0];
       resources = {
         ...resources,
         [language]: {
-          [templateName]: require(path.resolve('client', 'templates', templateName, 'locales', file))
+          [templateName]: require(path.resolve(dir, file))
         }
       };
     });

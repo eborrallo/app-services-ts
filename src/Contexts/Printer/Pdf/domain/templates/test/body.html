@@ -1,0 +1,29 @@
+{% extends "test/base.html" %}
+
+{% block content %}
+<main class="content mt-5">
+  <!-- Begin Header -->
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="row">
+          <div class="col-3">
+            <img src="{{ 'logo.jpg' | base64Image }}" />
+          </div>
+        </div>
+        <div class="row mt-4 invoice-number">
+          <div class="col-2 text-right fs-14 mt-2">
+            <p><strong>{{ 'invoice' | t('en')}}</strong></p>
+          </div>
+          <div class="col">
+            <h1>{{ arg1 }}</h1>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- End header -->
+
+</main>
+{% endblock %}

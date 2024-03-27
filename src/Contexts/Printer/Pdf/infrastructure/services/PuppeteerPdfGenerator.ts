@@ -53,7 +53,6 @@ export class PuppeteerPdfGenerator implements PdfGenerator {
       }
 
       this.logger.debug(`Creating PDF ${correlationId} ${messageId}`);
-
       try {
         await page.pdf({
           path: filePath,
@@ -72,7 +71,9 @@ export class PuppeteerPdfGenerator implements PdfGenerator {
 
       return filePath;
     } finally {
-      page.close().catch(() => {
+      page.close().then(()=>{
+      }).catch(() => {
+        console.log('Failed to close page');
       });
     }
   }

@@ -42,6 +42,7 @@ export class NunjucksTemplateEngine implements TemplateEngine{
 
     //TODO find it on S3 ( Storage context)
     if (!fs.existsSync(template)) {
+      console.log('Template not found', template)
       return '';
     }
 

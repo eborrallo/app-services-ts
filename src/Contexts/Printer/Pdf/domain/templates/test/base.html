@@ -1,0 +1,27 @@
+<!doctype html>
+<html class="no-js" lang="eng">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="theme-color" content="#ff5326">
+
+  <title>Details</title>
+
+  <style>
+    {{ 'bootstrap.min.css' | loadCss('common')  }}
+    {{ 'fonts.css' | loadCss }}
+    {{ 'font-awesome.css' | loadCss('common') }}
+    {{ 'main.css' | loadCss }}
+  </style>
+</head>
+
+<body>
+  {% set currencyLocale = 'en-GB' %}
+  {% block content %}{% endblock %}
+</body>
+
+</html>

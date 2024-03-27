@@ -1,0 +1,18 @@
+#disclaimer {
+    font-family: 'Cairo';
+    font-size:5pt !important;
+    margin: 0 auto;
+}
+
+.col {
+    width: 44%;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+    text-align: right;
+}
