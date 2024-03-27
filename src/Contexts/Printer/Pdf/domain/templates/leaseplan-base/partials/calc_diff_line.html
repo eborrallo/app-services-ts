@@ -1,0 +1,24 @@
+<div class="invoice-line" style="margin-top: 3mm" data-amount="{{line.net_amount}}">
+        <div class="row">
+        <div class="col-3"></div>
+        <div class="col-5">
+            {{ line.product_name }}
+        </div>
+        <div class="col-2">
+            <div class="row">
+                <div class="col-3">
+                    {{ invoice.currency }}
+                </div>
+                <div class="col-9 text-right">
+                    {{ line.taxes[0].amount|default(0) | currencyFormat(invoice.currency, currencyLocale) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-2 align-text-bottom total-amount  th-gray">
+            <div class="row h-100">
+                <div class="currency-on-line col-4">{{ invoice.currency }}</div>
+                <div class="text-right col-8">{{ line.net_amount | currencyFormat(invoice.currency, currencyLocale) }}</div>
+            </div>
+        </div>
+    </div>
+</div>

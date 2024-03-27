@@ -9,7 +9,8 @@ export class RabbitMQConfigurer {
     private connection: RabbitMQConnection,
     private queueNameFormatter: RabbitMQQueueFormatter,
     private messageRetryTtl: number
-  ) {}
+  ) {
+  }
 
   async configure(params: { exchange: string; subscribers: Array<DomainEventSubscriber<DomainEvent>> }): Promise<void> {
     const retryExchange = RabbitMQExchangeNameFormatter.retry(params.exchange);
@@ -20,6 +21,7 @@ export class RabbitMQConfigurer {
     await this.connection.exchange({ name: deadLetterExchange });
 
     for (const subscriber of params.subscribers) {
+
       await this.addQueue(subscriber, params.exchange);
     }
   }
@@ -29,8 +31,8 @@ export class RabbitMQConfigurer {
     const deadLetterExchange = RabbitMQExchangeNameFormatter.deadLetter(exchange);
 
     const routingKeys = this.getRoutingKeysFor(subscriber);
-
     const queue = this.queueNameFormatter.format(subscriber);
+    console.log('Creating queue:', queue);
     const deadLetterQueue = this.queueNameFormatter.formatDeadLetter(subscriber);
     const retryQueue = this.queueNameFormatter.formatRetry(subscriber);
 

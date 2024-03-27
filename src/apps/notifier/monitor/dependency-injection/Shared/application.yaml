@@ -39,10 +39,6 @@ services:
     class: ../../../../../Contexts/Shared/infrastructure/EventBus/RabbitMQ/RabbitMQConnection
     arguments: ['@Notifier.Shared.RabbitMQConfig']
 
-  Notifier.Shared.RabbitMQQueueFormatter:
-    class: ../../../../../Contexts/Shared/infrastructure/EventBus/RabbitMQ/RabbitMQQueueFormatter
-    arguments: ['notifier']
-
   Notifier.Shared.DomainEventFailoverPublisher:
     class: ../../../../../Contexts/Shared/infrastructure/EventBus/DomainEventFailoverPublisher/DomainEventFailoverPublisher
     arguments: ['@Notifier.Shared.ConnectionManager']

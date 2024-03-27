@@ -1,0 +1,24 @@
+services:
+  CreateDocumentController:
+    class: ../../controllers/CreateDocumentController
+    arguments: ['@Printer.Shared.domain.CommandBus']
+  CreateDocumentCommandHandler:
+    class: ../../../../../Contexts/Printer/Pdf/application/Create/CreateDocumentCommandHandler
+    arguments: ['@DocumentRepository', '@Printer.Shared.domain.EventBus']
+    tags:
+      - { name: 'commandHandler' }
+  DocumentRepository:
+      class: ../../../../../Contexts/Printer/Pdf/infrastructure/persistence/TypeOrmDocumentRepository
+      arguments: ['@Printer.Shared.ConnectionManager']
+  PdfGenerator:
+      class: ../../../../../Contexts/Printer/Pdf/infrastructure/services/PuppeteerPdfGenerator
+      arguments: ['@WebClient','@Shared.Logger']
+  WebClient:
+      factory:
+        class: ../../../../../Contexts/Printer/Pdf/infrastructure/services/WebClientFactory
+        method: 'client'
+  GeneratePdfOnDocumentCreated:
+    class: ../../../../../Contexts/Printer/Pdf/application/GeneratePdfOnDocumentCreated
+    arguments: ['@PdfGenerator','@Shared.Logger']
+    tags:
+      - { name: 'domainEventSubscriber' }

@@ -1,0 +1,37 @@
+<div class="row">
+    <div class="col-6">
+        {{ 'net' | t }}
+    </div>
+    <div class="col-2">
+        {{ invoice.currency }}
+    </div>
+    <div class="col-4 text-right">
+        {{ taxes[0].base | default(0, true) | currencyFormat(invoice.currency, currencyLocale) }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        {{ 'tax' | t }}
+        {{ taxes[0].percentage | default(0, true) | numberFormat(numberLocale, 1) }}
+        %
+    </div>
+    <div class="col-2">
+        {{ invoice.currency }}
+    </div>
+    <div class="col-4 text-right">
+        {{ taxes[0].amount | default(0, true) | currencyFormat(invoice.currency, currencyLocale) }}
+    </div>
+</div>
+{% if(taxes[1] | length ) %}
+    <div class="row">
+        <div class="col-6">
+            {{ 'tax_free' | t }}
+        </div>
+        <div class="col-2">
+            {{ invoice.currency }}
+        </div>
+        <div class="col-4 text-right">
+            {{ taxes[1].base | default(0, true) | currencyFormat(invoice.currency, currencyLocale) }}
+        </div>
+    </div>
+{% endif %}

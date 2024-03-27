@@ -1,0 +1,88 @@
+{% set taxesLength = headerTaxes | length %}
+
+{% if 1 == taxesLength %}
+    <div class="row">
+        <div class="col-6">
+            {{ 'tax_free' | t }}
+        </div>
+        <div class="col-2">
+            {{ invoice.currency }}
+        </div>
+        <div class="col-4 text-right">
+            {% if headerTaxes[0].exempt %}
+                {{ headerTaxes[0].base|default(0) | currencyFormat(invoice.currency, currencyLocale) }}
+            {% else %}
+                {{ '0' | currencyFormat(invoice.currency, currencyLocale) }}
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            {{ 'net' | t }}
+        </div>
+        <div class="col-2">
+            {{ invoice.currency }}
+        </div>
+        <div class="col-4 text-right">
+            {% if headerTaxes[0].exempt %}
+                {{ '0' | currencyFormat(invoice.currency, currencyLocale) }}
+            {% else %}
+                {{ headerTaxes[0].base|default(0) | currencyFormat(invoice.currency, currencyLocale) }}
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            {{ 'tax' | t }}
+            {{ headerTaxes[0].percentage | default(0, true) | numberFormat(numberLocale, 1) }}
+            %
+        </div>
+        <div class="col-2">
+            {{ invoice.currency }}
+        </div>
+        <div class="col-4 text-right">
+            {% if not headerTaxes[0].exempt %}
+                {{ headerTaxes[0].amount|default(0) | currencyFormat(invoice.currency, currencyLocale) }}
+            {% else %}
+                {{ '0' | currencyFormat(invoice.currency, currencyLocale) }}
+            {% endif %}
+        </div>
+    </div>
+
+{% else %}
+    <div class="row">
+        <div class="col-6">
+            {{ 'tax_free' | t }}
+        </div>
+        <div class="col-2">
+            {{ invoice.currency }}
+        </div>
+        <div class="col-4 text-right">
+            {{ headerTaxes[1].base|default(0) | currencyFormat(invoice.currency, currencyLocale) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            {{ 'net' | t }}
+        </div>
+        <div class="col-2">
+            {{ invoice.currency }}
+        </div>
+        <div class="col-4 text-right">
+            {{ headerTaxes[0].base|default(0) | currencyFormat(invoice.currency, currencyLocale) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            {{ 'tax' | t }}
+            {{ headerTaxes[0].percentage | default(0, true) | numberFormat(numberLocale, 1) }}
+            %
+        </div>
+        <div class="col-2">
+            {{ invoice.currency }}
+        </div>
+        <div class="col-4 text-right">
+            {{ headerTaxes[0].amount|default(0) | currencyFormat(invoice.currency, currencyLocale) }}
+        </div>
+    </div>
+{% endif %}

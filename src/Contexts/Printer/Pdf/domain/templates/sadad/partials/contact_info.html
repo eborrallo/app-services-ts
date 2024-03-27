@@ -1,0 +1,60 @@
+{% macro render(contact) %}
+<div class="row mt-2">
+  <div class="col">
+    <p>
+      {% if contact.name %}
+      <strong>{{ contact.name | escape | nl2br }}</strong><br />
+      {% endif %}
+
+      {% if contact.address_line_1 %}
+      {{ contact.address_line_1 | escape | nl2br }}
+      {% endif %}
+
+      {% if contact.address_line_2 %}
+      {{ contact.address_line_2 | escape | nl2br }}<br />
+      {% endif %}
+
+      {% if contact.city %}
+      {{ contact.city }}
+      {% endif %}
+
+      {% if contact.state %}
+      , {{ contact.state }}<br />
+      {% endif %}
+
+      {% if contact.email %}
+      <i class="far fa-envelope"></i> {{ contact.email }}<br />
+      {% endif %}
+
+      {% if contact.phone %}
+      <i class="fas fa-phone"></i> {{ contact.phone }}<br />
+      {% endif %}
+
+      {% if contact.fax %}
+      <i class="fas fa-fax"></i> {{ contact.fax }}<br />
+      {% endif %}
+    </p>
+  </div>
+</div>
+{% if contact.company_registration_number %}
+<div class="row">
+  <div class="col"><strong>{{ 'cr_number' | t('en')}}</strong></div>
+  <div class="col text-center">{{ contact.company_registration_number }}</div>
+  <div class="col text-right arabic"><strong>{{ 'cr_number' | t('ar') }}</strong></div>
+</div>
+{% endif %}
+{% if contact.tax_number %}
+<div class="row">
+  <div class="col"><strong>{{ 'vat_number' | t('en')}}</strong></div>
+  <div class="col text-center">{{ contact.tax_number }}</div>
+  <div class="col text-right arabic"><strong>{{ 'vat_number' | t('ar') }}</strong></div>
+</div>
+{% endif %}
+{% if contact.gln %}
+<div class="row">
+  <div class="col"><strong>{{ 'gln' | t('en')}}</strong></div>
+  <div class="col text-center">{{ contact.gln }}</div>
+  <div class="col text-right arabic"><strong>{{ 'gln' | t('ar') }}</strong></div>
+</div>
+{% endif %}
+{% endmacro %}

@@ -1,0 +1,214 @@
+{% set paymentSlipAddress1 = invoice.invoice_custom_fields | field('paymentSlipAddress1') %}
+{% set paymentSlipAddress2 = invoice.invoice_custom_fields | field('paymentSlipAddress2') %}
+{% set paymentSlipAddress3 = invoice.invoice_custom_fields | field('paymentSlipAddress3') %}
+{% set paymentSlipAddress4 = invoice.invoice_custom_fields | field('paymentSlipAddress4') %}
+{% set paymentSlipAddress5 = invoice.invoice_custom_fields | field('paymentSlipAddress5') %}
+<div id="paymentSlip">
+    <div class="detach-line">
+        <h4>
+            <span class="detach-line-markings">▼▼▼</span>
+            {{ 'payment_slip_detach' | t('de') }} / {{ 'payment_slip_detach' | t('fr') }} / {{ 'payment_slip_detach' | t('it') }}
+            <span class="detach-line-markings">▼▼▼</span>
+        </h4>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <div class="paymentSlip row">
+                    <div class="row border-bottom paymentSlip-header">
+                        <div class="col-7">
+                                <div class="row">
+                                    <div class="col border-right">
+                                        {{ 'receipt' | t('de') }} / {{ 'receipt' | t('fr') }} / {{ 'receipt' | t('it') }}
+                                    </div>
+                                    <div class="col">
+                                        {{ 'payment_transfer' | t('de') }}
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="col-5">
+                                <div class="row">
+                                    <div class="col-7">
+                                        {{ 'payment_transfer' | t('fr') }}
+                                    </div>
+                                    <div class="col-5">
+                                        {{ 'payment_transfer' | t('it') }}
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-7 border-right">
+                            <div class="row">
+                                    <div class="col-6">
+                                        <h4>{{ 'deposit_for' | t('de') }} / {{ 'deposit_for' | t('fr') }} / {{ 'deposit_for' | t('it') }}</h4>
+                                        <p>UBS AG<br/>
+                                            8098 Zürich</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h4>{{ 'deposit_for' | t('de') }} / {{ 'deposit_for' | t('fr') }} / {{ 'deposit_for' | t('it') }}</h4>
+                                        <p>UBS AG<br/>
+                                            8098 Zürich</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h4>{{ 'in_favor_of' | t('de') }} / {{ 'in_favor_of' | t('fr') }} / {{ 'in_favor_of' | t('it') }}</h4>
+                                        <p>LeasePlan (Schweiz) AG<br/>
+                                            Baslerpark<br/>
+                                            Baslerstrasse 60<br/>
+                                            8048 Zürich, Schweiz
+                                        </p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h4>{{ 'in_favor_of' | t('de') }} / {{ 'in_favor_of' | t('fr') }} / {{ 'in_favor_of' | t('it') }}</h4>
+                                        <p>LeasePlan (Schweiz) AG<br/>
+                                            Baslerpark<br/>
+                                            Baslerstrasse 60<br/>
+                                            8048 Zürich, Schweiz</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <div>
+                                            <h4 class="float-left">{{ 'account' | t('de') }} / {{ 'account' | t('fr') }} / {{ 'account' | t('it') }}</h4>
+                                            <p class="float-left ml-1 mb-0">
+                                                01-145-6
+                                            </p>
+                                            <div class="clear"></div>
+                                            <p class="mb-0">CHF</p>
+                                        </div>
+                                        {% set paymentSlipPrice = invoice.invoice_custom_fields | field('paymentSlipAmount') | split('.') %}
+                                        <div class="row slipAmount">
+                                            <div class="col-8 pr-0">
+                                                <div class="block">{{ paymentSlipPrice[0] }}</div>
+                                            </div>
+                                            <div class="col-1">
+                                                <p>.</p>
+                                            </div>
+                                            <div class="col-3 pl-0">
+                                                <div class="block">{{ paymentSlipPrice[1] }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <h4>{{ 'payed_by' | t('de') }} / {{ 'payed_by' | t('fr') }} / {{ 'payed_by' | t('it') }}</h4>
+                                                <p class="smallerText">
+                                                    {{ invoice.invoice_custom_fields | field('paymentSlipReferenceNumber') }}<br/>
+                                                    {% if paymentSlipAddress1 %}
+                                                        {{ paymentSlipAddress1 }}<br/>
+                                                    {% endif %}
+                                                    {% if paymentSlipAddress2 %}
+                                                        {{ paymentSlipAddress2 }}<br/>
+                                                    {% endif %}
+                                                    {% if paymentSlipAddress3 %}
+                                                        {{ paymentSlipAddress3 }}<br />
+                                                    {% endif %}
+                                                    {% if paymentSlipAddress4 %}
+                                                        {{ paymentSlipAddress4 }}
+                                                    {% endif %}
+                                                    {% if paymentSlipAddress5 %}
+                                                        {{ paymentSlipAddress5 }}
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div>
+                                            <h4 class="float-left">{{ 'account' | t('de') }} / {{ 'account' | t('fr') }} / {{ 'account' | t('it') }}</h4>
+                                            <p class="float-left ml-1 mb-0">
+                                                01-145-6
+                                            </p>
+                                            <div class="clear"></div>
+                                            <p class="mb-0">CHF</p>
+                                        </div>
+                                        <div class="row slipAmount">
+                                            <div class="col-8 pr-0">
+                                                <div class="block">{{ paymentSlipPrice[0] }}</div>
+                                            </div>
+                                            <div class="col-1">
+                                                <p>.</p>
+                                            </div>
+                                            <div class="col-3 pl-0">
+                                                <div class="block">{{ paymentSlipPrice[1] }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                           </div>
+                        <div class="col-5">
+                                <div class="row">
+                                    <div class="col-7 border-bottom border-right pt-4 pb-4">
+                                        <h4>{{ 'do_not_post_messages' | t('de') }}</h4>
+                                        <h4>{{ 'do_not_post_messages' | t('fr') }}</h4>
+                                        <h4>{{ 'do_not_post_messages' | t('it') }}</h4>
+                                    </div>
+                                    <div class="col-5 border-bottom">
+                                        <div class="row">
+                                            <div class="col-9 pt-1 pl-3">
+                                                <div class="circle"></div>
+                                            </div>
+                                            <div class="col-3">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="block mt-2">
+                                            <div class="titleBlock">
+                                                <h4>{{ 'reference_number' | t('de') }}/{{ 'reference_number' | t('fr') }}/{{ 'reference_number' | t('it') }}</h4>
+                                            </div>
+                                            <div class="reference">
+                                                {{ invoice.invoice_custom_fields | field('paymentSlipReferenceNumber') }}
+                                            </div>
+
+                                            <h4 class="mt-3 mb-2">{{ 'payed_by' | t('de') }} / {{ 'payed_by' | t('fr') }} / {{ 'payed_by' | t('it') }}</h4>
+                                            <p>
+                                                {% if paymentSlipAddress1 %}
+                                                    {{ paymentSlipAddress1 }}<br/>
+                                                {% endif %}
+                                                {% if paymentSlipAddress2 %}
+                                                    {{ paymentSlipAddress2 }}<br/>
+                                                {% endif %}
+                                                {% if paymentSlipAddress3 %}
+                                                    {{ paymentSlipAddress3 }}<br />
+                                                {% endif %}
+                                                {% if paymentSlipAddress4 %}
+                                                    {{ paymentSlipAddress4 }}
+                                                {% endif %}
+                                                {% if paymentSlipAddress5 %}
+                                                    {{ paymentSlipAddress5 }}
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                         </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="row">
+                                <div class="col-4">
+                                        <div class="circle"></div>
+                                    </div>
+                                    <div class="col-8 pt-3 smallerText">
+                                        {{ 'receiving_office' | t('de') }}<br/>
+                                        {{ 'receiving_office' | t('fr') }}<br/>
+                                        {{ 'receiving_office' | t('it') }}
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="col-8">
+                                <p class="borderCorners">
+                                    <span class="corners">609</span>
+                                </p>
+                                <span class="break"></span>
+                                <p class="text-right oct-text">
+                                    {{ invoice.invoice_custom_fields | field('paymentSlipCodingZone') }}</p>
+                            </div>
+                         </div>
+                    <div class="row"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

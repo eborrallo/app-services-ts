@@ -1,0 +1,358 @@
+{% extends "sadad/base.html" %}
+
+{% block content %}
+<main class="content mt-5">
+  <!-- Begin Header -->
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="row">
+          <div class="col-3">
+            {% if company.logo_url %}
+              <img src="{{ company.logo_url }} " />
+            {% else %}
+              <img src="{{ 'logo.png' | base64Image }}" />
+            {% endif %}
+          </div>
+        </div>
+        <div class="row mt-4 invoice-number">
+          <div class="col-2 text-right fs-14 mt-2">
+            <span class="arabic"><strong>{{ 'invoice' | t('ar') }}</strong></span>
+            <p><strong>{{ 'invoice' | t('en')}}</strong></p>
+          </div>
+          <div class="col">
+            <h1>{{ invoice.invoice_number }}</h1>
+          </div>
+        </div>
+        {% if invoice.invoice_code %}
+        <div class="row mt-0 invoice-bill-id">
+          <div class="col">
+            <p>{{'sadad_bills_id' | t('en')}}: {{ invoice.invoice_code }}</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      <div class="col-5">
+        {% if invoice.invoice_date %}
+          <div class="row mb-2">
+            <div class="col"><strong>{{ 'issue_date' | t('en')}}</strong></div>
+            <div class="col text-center">{{ invoice.invoice_date }}</div>
+            <div class="col text-right arabic"><strong>{{ 'issue_date' | t('ar') }}</strong></div>
+          </div>
+        {% endif %}
+        {% if invoice.references.delivery_date %}
+          <div class="row mb-2">
+            <div class="col"><strong>{{ 'supply_date' | t('en')}}</strong></div>
+            <div class="col text-center">{{ invoice.references.delivery_date }}</div>
+            <div class="col text-right arabic"><strong>{{ 'supply_date' | t('ar') }}</strong></div>
+          </div>
+        {% endif %}
+        {% if invoice.due_date %}
+          <div class="row mb-2">
+            <div class="col"><strong>{{ 'due_date' | t('en')}}</strong></div>
+            <div class="col text-center">{{ invoice.due_date }}</div>
+            <div class="col text-right arabic"><strong>{{ 'due_date' | t('ar') }}</strong></div>
+          </div>
+        {% endif %}
+        {% if invoice.billing_cycle_from or invoice.billing_cycle_to %}
+          <div class="row mb-2">
+            <div class="col"><strong>{{ 'billing_cycle' | t('en')}}</strong></div>
+            <div class="col text-center">{{ invoice.billing_cycle_from }} - {{ invoice.billing_cycle_end }}</div>
+            <div class="col text-right arabic"><strong>{{ 'billing_cycle' | t('ar') }}</strong></div>
+          </div>
+        {% endif %}
+        {% if invoice.debtor_number %}
+          <div class="row mb-2">
+            <div class="col"><strong>{{ 'customer' | t('en')}}</strong></div>
+            <div class="col text-center">{{ invoice.debtor_number }}</div>
+            <div class="col text-right arabic"><strong>{{ 'customer' | t('ar') }}</strong></div>
+          </div>
+        {% endif %}
+        {% if invoice.references.customer_reference %}
+          <div class="row mb-2">
+            <div class="col"><strong>{{ 'po_number' | t('en')}}</strong></div>
+            <div class="col text-center">{{ invoice.references.customer_reference }}</div>
+            <div class="col text-right arabic"><strong>{{ 'po_number' | t('ar') }}</strong></div>
+          </div>
+        {% endif %}
+        {% if invoice.invoice_custom_fields %}
+          {% for custom_field in invoice.invoice_custom_fields %}
+            {% if custom_field.field == 'depot' %}
+              <div class="row mb-2">
+                <div class="col"><strong>{{ 'depot' | t('en')}}</strong></div>
+                <div class="col text-center">{{ custom_field.value }}</div>
+                <div class="col text-right arabic"><strong>{{ 'depot' | t('ar') }}</strong></div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <!-- End header -->
+
+  <!-- Begin Companies Contact Information -->
+  <div class="container mt-4" style="page-break-inside: avoid">
+    <div class="row">
+
+      <!-- Begin SOLD TO -->
+      <div class="col">
+        {% if invoice.contacts.sold_to %}
+          <div class="row">
+            <div class="col"><strong>{{ 'sold_to' | t('en')}}</strong></div>
+            <div class="col text-right arabic"><strong>{{ 'sold_to' | t('ar') }}</strong></div>
+          </div>
+          {{ contactInfo.render(invoice.contacts.sold_to) }}
+        {% endif %}
+      </div>
+      <!-- End SOLD TO -->
+
+      {% include 'sadad/partials/separator.html' %}
+
+      <!-- Begin BILL TO -->
+      <div class="col">
+        {% if invoice.contacts.bill_to %}
+          <div class="row">
+            <div class="col"><strong>{{ 'bill_to' | t('en')}}</strong></div>
+            <div class="col text-right arabic"><strong>{{ 'bill_to' | t('ar') }}</strong></div>
+          </div>
+          {{ contactInfo.render(invoice.contacts.bill_to) }}
+        {% endif %}
+      </div>
+      <!-- End BILL TO -->
+    </div>
+  </div>
+  <!-- End Companies Contact Information -->
+
+  <!-- Begin Invoice Details -->
+  <div class="container mt-5">
+
+    <!-- Begin Invoice Lines -->
+    <div class="row">
+      <div class="col">
+        <table class="table table-condensed invoice-lines invoice_counter">
+          <thead class="thead-light table-bordered">
+          <tr>
+		  	{% set foreignCurrency = invoice.invoice_custom_fields | field('Foreign Currency') %}
+            <th scope="col"></th>
+            <th scope="col"><span>{{ 'item_code' | t('ar') }}</span>{{ 'item_code' | t('en')}}</th>
+            <th scope="col"><span>{{ 'description' | t('ar') }}</span>{{ 'description' | t('en')}}</th>
+            <th scope="col"><span>{{ 'qty' | t('ar') }}</span>{{ 'qty' | t('en')}}</th>
+            <th scope="col"><span>{{ 'price' | t('ar') }}</span>{{ 'price' | t('en')}}</th>
+            {% if foreignCurrency %}<th scope="col"><span>{{ 'price_foreign' | t('ar') }}</span>{{ 'price_foreign' | t('en')}}</th>{% endif %}
+            <th scope="col"><span>{{ 'discount' | t('ar') }}</span>{{ 'discount' | t('en')}}</th>
+            <th scope="col"><span>{{ 'discount_amount' | t('ar') }}</span>{{ 'discount_amount' | t('en')}}</th>
+            <th scope="col"><span style="direction: rtl;">{{ 'vat' | t('ar') }}</span>{{ 'vat' | t('en')}}</th>
+            <th scope="col"><span>{{ 'taxable_amount' | t('ar') }}</span>{{ 'taxable_amount' | t('en')}}</th>
+            <th scope="col" class="total-field"><span>{{ 'amount' | t('ar') }}</span>{{ 'amount' | t('en')}}</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for line in invoice.lines %}
+		  	{% set exempt = line.taxes | taxByType('exempt') %}
+	  		{% set not_taxation = line.taxes | taxByType('AMOUNT_NOT_SUBJECT_TO_TAXATION') %}
+            <tr>
+              <td scope="row" class="invoice_count"></td>
+              <td>{{ line.product_code }}</td>
+              <td class="text-left">{{ line.product_name | escape | nl2br }}</td>
+              <td>{{ line.quantity }} {{ line.unit_of_measure }} </td>
+              <td>{{ line.price|currencyFormat(invoice.currency, currencyLocale,true) }}</td>
+              {% if foreignCurrency %}<td>{{ line.custom_fields | field('Item Price in Foreign Currency') | currencyFormat(foreignCurrency,  currencyLocale,true) }}</td>{% endif %}
+              <td>{{ line.discount_percentage|default(0)|percentage }}</td>
+              <td>{{ line.discount_amount|default(0)|currencyFormat(invoice.currency, currencyLocale,true) }}</td>
+              <td>
+				  {% if exempt %}
+					  {{ 'exempted_amount' | t('en')}}
+				  {% elseif not_taxation %}
+					  {{ 'tax_out_of_scope' | t('en')}}
+				  {% else %}
+					  {{ line.taxes[0].percentage|default(0)|percentage }}
+				  {% endif %}
+			  </td>
+              <td>
+				  {% if exempt %}
+					  {{ 'exempted_amount' | t('en')}}
+				  {% elseif not_taxation %}
+					  {{ 'tax_out_of_scope' | t('en')}}
+				  {% else %}
+					  {{ line.taxes[0].amount|default(0)|currencyFormat(invoice.currency, currencyLocale,true) }}
+				  {% endif %}
+			  </td>
+              <td>{{ line.subtotal_amount|currencyFormat(invoice.currency, currencyLocale,true) }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- End Invoice Lines -->
+
+    <div class="row" style="page-break-inside: avoid;">
+
+      <!-- Begin Additional Invoice Info -->
+      <div class="col">
+        <div class="row">
+          <div class="col mt-5">
+
+            <!-- Begin PAYMENT TERMS -->
+            {% if invoice.payment_information.payment_terms %}
+              <div class="row">
+                <div class="col">
+                  <strong>{{ 'payment_terms' | t('en')}}</strong>
+                </div>
+                <div class="col text-right arabic"><strong>{{ 'payment_terms' | t('ar') }}</strong></div>
+              </div>
+              <div class="row">
+                <div class="col-10">{{ invoice.payment_information.payment_terms | escape | nl2br }}</div>
+              </div>
+            {% endif %}
+            {% if invoice.payment_information.payment_type %}
+              <div class="row">
+                <div class="col">
+                  <strong>{{ 'payment_type' | t('en')}}</strong>
+                </div>
+                <div class="col text-right arabic"><strong>{{ 'payment_type' | t('ar') }}</strong></div>
+              </div>
+              <div class="row">
+                <div class="col-10">{{ invoice.payment_information.payment_type  }}</div>
+              </div>
+            {% endif %}
+            <!-- End PAYMENT TERMS -->
+
+            {% if invoice.remarks or invoice.taxes[0].description or invoice.taxes | taxByType('shifted') %}
+              <!-- Begin REMARKS -->
+              {% if invoice.remarks %}
+                <div class="row mt-5">
+                  <div class="col">
+                    <strong>{{ 'remarks' | t('en')}}</strong>
+                  </div>
+                  <div class="col text-right arabic"><strong>{{ 'remarks' | t('ar') }}</strong></div>
+                </div>
+                <div class="row">
+                  <div class="col-10">{{ invoice.remarks | escape | nl2br }}</div>
+                </div>
+              {% endif %}
+              {% set activeTax = invoice.taxes | last %}
+              {% if activeTax.description %}
+                <div class="row mt-5">
+                  <div class="col">
+                    <strong>{{ 'narration' | t('en')}}</strong>
+                  </div>
+                  <div class="col text-right arabic"><strong>{{ 'narration' | t('ar') }}</strong></div>
+                </div>
+                <div class="row">
+                  <div class="col-10">
+                    {{ activeTax.description | escape | nl2br }} <br/>
+                  </div>
+                </div>
+              {% endif %}
+              {% if invoice.taxes | taxByType('shifted') %}
+                <div class="row">
+                  <div class="col-10"><strong>{{ 'shifted' | t('en')}}</strong></div>
+                  <div class="col-10"><strong>{{ 'shifted' | t('ar') }}</strong></div>
+                </div>
+              {% endif %}
+
+              <!-- End REMARKS -->
+            {% endif %}
+
+              {% if invoice.terms_and_agreements %}
+              <!-- Begin COMPANY TERMS -->
+              <div class="row mt-5">
+                <div class="col">
+                  <strong>{{ 'company_terms' | t('en')}}</strong>
+                </div>
+                <div class="col text-right arabic"><strong>{{ 'company_terms' | t('ar') }}</strong></div>
+              </div>
+              <div class="row">
+                <div class="col-10">{{ invoice.terms_and_agreements | escape | nl2br }}</div>
+              </div>
+              <!-- End COMPANY TERMS -->
+            {% endif %}
+          </div>
+
+        </div>
+
+      </div>
+      <!-- End Additional Invoice Info -->
+
+      {% include 'sadad/partials/separator.html' %}
+
+      <!-- Begin Totals -->
+      <div class="col">
+        <div class="row">
+          <div class="col-4"></div>
+          <div class="col">
+            <table class="table invoice-totals">
+              <tbody>
+              <tr>
+                <td><span>{{ 'subtotal' | t('ar') }}</span>{{ 'subtotal' | t('en')}}</th>
+                <td class="total-field">{{ invoice.subtotal_amount | currencyFormat(invoice.currency, currencyLocale,true) }}</td>
+              </tr>
+              <tr>
+                <td><span>{{ 'discount_invoice_level' | t('ar') }}</span>{{ 'discount_invoice_level' | t('en')}}</th>
+                <td class="total-field">{{ invoice.discount_amount | currencyFormat(invoice.currency, currencyLocale,true) }}</td>
+              </tr>
+              <tr>
+                <td><span>{{ 'gross_amount' | t('ar') }}</span>{{ 'gross_amount' | t('en')}}</th>
+                <td class="total-field">{{ invoice.totalTaxBase | currencyFormat(invoice.currency, currencyLocale,true) }}</td>
+              </tr>
+              <tr>
+                <td><span>{{ 'total_vat' | t('ar') }}</span>{{ 'total_vat' | t('en')}}</th>
+                <td class="total-field">{{ invoice.totalVAT|currencyFormat(invoice.currency, currencyLocale,true) }}</td>
+              </tr>
+              {% if invoice.deposit_amount %}
+                <tr>
+                  <td><span>{{ 'deposit_amount' | t('ar') }}</span>{{ 'deposit_amount' | t('en')}}</th>
+                    <td class="total-field">{{ invoice.deposit_amount|currencyFormat(invoice.currency, currencyLocale,true) }}</td>
+                </tr>
+              {% endif %}
+              <tr>
+                <td><strong><span>{{ 'net_total' | t('ar') }}</span>{{ 'net_total' | t('en')}}</strong></th>
+                <td class="total-field"><strong>{{ invoice.payable_amount|currencyFormat(invoice.currency, currencyLocale,true) }}</strong></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- End Totals -->
+    </div>
+
+  </div>
+  <!-- End Invoice Details -->
+
+  <!-- Begin Companies Ship/Bill Information -->
+  <div class="container mt-5" style="page-break-inside: avoid;">
+    <div class="row">
+
+      <!-- Begin SHIP FROM -->
+      <div class="col">
+        {% if invoice.contacts.from %}
+          <div class="row">
+            <div class="col"><strong>{{ 'ship_from' | t('en')}}</strong></div>
+            <div class="col text-right arabic"><strong>{{ 'ship_from' | t('ar') }}</strong></div>
+          </div>
+          {{ contactInfo.render(invoice.contacts.from) }}
+        {% endif %}
+      </div>
+      <!-- End SHIP FROM -->
+
+      {% include 'sadad/partials/separator.html' %}
+
+      <!-- Begin BILL FROM -->
+      <div class="col">
+        {% if invoice.contacts.ship_to %}
+          <div class="row">
+            <div class="col"><strong>{{ 'bill_from' | t('en')}}</strong></div>
+            <div class="col text-right arabic"><strong>{{ 'bill_from' | t('ar') }}</strong></div>
+          </div>
+          {{ contactInfo.render(invoice.contacts.ship_to) }}
+        {% endif %}
+      </div>
+      <!-- End BILL FROM -->
+    </div>
+  </div>
+  <!-- End Companies ship/bill Information -->
+</main>
+{% endblock %}

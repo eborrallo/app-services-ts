@@ -1,0 +1,212 @@
+{% extends "./base.html" %}
+
+{% block content %}
+    {% set language = invoice.invoice_custom_fields | field('templateLanguage') %}
+
+    <div class="page">
+        <table class="main">
+            <thead>
+                <tr>
+                    <td>
+                        <div class="header-space"></div>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div
+                            class="content">
+                            <!-- Begin Companies Contact Information -->
+                            {% block contactInformation %}
+                                <div class="container contact-information" style="page-break-inside: avoid">
+                                    <div
+                                        class="row">
+                                        <!--Bill to -->
+                                        <div class="col-7">
+                                            {% if invoice.contacts.bill_to %}
+                                                <div class="row">
+                                                    <div class="col contact-type">
+                                                        <strong>{{ 'bill_to' | t }}</strong>
+                                                    </div>
+                                                </div>
+                                                {% if invoice.contacts.bill_to.name %}
+                                                    {{ invoice.contacts.bill_to.name | escape | nl2br }}<br/>
+                                                {% endif %}
+
+                                                {% if invoice.contacts.bill_to.subname %}
+                                                    {{ invoice.contacts.bill_to.subname | escape | nl2br }}<br/>
+                                                {% endif %}
+
+                                                {% if invoice.contacts.bill_to.address_line_1 %}
+                                                    {{ invoice.contacts.bill_to.address_line_1 | escape | nl2br }}
+                                                    <br/>
+                                                {% endif %}
+
+                                                {% if invoice.contacts.bill_to.address_line_2 %}
+                                                    {{ invoice.contacts.bill_to.address_line_2 | escape | nl2br }}
+                                                    <br/>
+                                                {% endif %}
+
+                                                {% if invoice.contacts.bill_to.zip %}
+                                                    {{ invoice.contacts.bill_to.zip }}
+                                                {% endif %}
+
+                                                {% if invoice.contacts.bill_to.city %}
+                                                    {{ invoice.contacts.bill_to.city }}
+                                                {% endif %}
+
+                                                {% if invoice.contacts.bill_to.country_name %}
+                                                    <br/>
+                                                    {{ invoice.contacts.bill_to.country_name }}<br/>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                        <!--Sold to -->
+                                        <div class="col-5">
+                                            {% if invoice.contacts.sold_to %}
+                                                <div class="row">
+                                                    <div class="col contact-type">
+                                                        <strong>{{ 'sold_to' | t }}</strong>
+                                                    </div>
+                                                </div>
+                                                {% if invoice.contacts.sold_to.name %}
+                                                    {{ invoice.contacts.sold_to.name | escape | nl2br }}<br/>
+                                                {% endif %}
+
+                                                {% if invoice.contacts.sold_to.subname %}
+                                                    {{ invoice.contacts.sold_to.subname | escape | nl2br }}<br/>
+                                                {% endif %}
+
+                                                {% if invoice.contacts.sold_to.address_line_1 %}
+                                                    {{ invoice.contacts.sold_to.address_line_1 | escape | nl2br }}
+                                                    <br/>
+                                                {% endif %}
+
+                                                {% if invoice.contacts.sold_to.address_line_2 %}
+                                                    {{ invoice.contacts.sold_to.address_line_2 | escape | nl2br }}
+                                                    <br/>
+                                                {% endif %}
+
+                                                {% if invoice.contacts.sold_to.zip %}
+                                                    {{ invoice.contacts.sold_to.zip }}
+                                                {% endif %}
+
+                                                {% if invoice.contacts.sold_to.city %}
+                                                    {{ invoice.contacts.sold_to.city }}
+                                                {% endif %}
+
+                                                {% if invoice.contacts.sold_to.country_name %}
+                                                    <br/>
+                                                    {{ invoice.contacts.sold_to.country_name }}<br/>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+                                </div>
+                            {% endblock %}
+                            <!-- End Companies Contact Information -->
+
+                            <!-- Begin Invoice Details -->
+                            {% block invoiceDetails %}{% endblock %}
+                            <!-- End Invoice Details -->
+
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col mt-2">
+                                        <div>
+                                            {% block invoiceTitle %}{% endblock %}
+                                        </div>
+
+                                        <!-- Begin Invoice Lines -->
+                                        {% set numOfLines = invoice.lines | length %}
+                                        {% block invoiceLines %}{% endblock %}
+                                        <!-- End Invoice Lines -->
+
+                                        <!-- Begin Totals -->
+                                        {% block invoiceSummary %}
+                                            <div class="summary invoice-line">
+                                                <div class="row">
+                                                    <div class="col-6 border">
+                                                        {{ 'summary' | t }}
+                                                    </div>
+                                                    <div class="col-4 border">
+                                                        {% set headerTaxes = invoice.taxes | orderTaxes %}
+                                                        {% include 'leaseplan-base/partials/header_amounts_and_taxes.html' %}
+                                                    </div>
+                                                </div>
+
+                                                <!-- Total -->
+                                                <div class="row final-total th-gray">
+                                                    <div class="col-3">
+                                                        {{ 'net_total' | t }}
+                                                    </div>
+                                                    <div class="col-7">
+                                                        {% if ('CREDIT' == invoice.invoice_type) %}
+                                                            {{ 'to_their_favor' | t }}
+                                                        {% elif (192 == invoice.payment_method) %}
+                                                            {{ 'direct_debit' | t }}
+                                                        {% else %}
+                                                            {{ 'paid_to_date' | t }}
+                                                            {{ invoice.due_date | date(invoiceDateFormat, language) }}
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <div class="row">
+                                                            <div class="currency-on-line col-4">{{ invoice.currency }}</div>
+                                                            <div class="text-right col-8">{{ invoice.net_amount | currencyFormat(invoice.currency, currencyLocale) }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endblock %}
+                                        <!-- End Totals -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        <div class="footer-space">&nbsp;</div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        <div class="header" id="header">
+            {% include 'leaseplan-base/partials/header.html' %}
+        </div>
+        <div class="footer" id="footer">
+            {% include 'leaseplan-base/partials/footer.html' %}
+        </div>
+    </div>
+    {% if ('CREDIT' != invoice.invoice_type) %}
+        <div class="final-footer">
+            <div class="payment-slip-container" id="payment-slip-container">
+                {% include 'leaseplan-base/partials/footer.html' %}
+                {% include 'leaseplan-base/partials/payment_slip.html' %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% block ubertrag %}
+        <div class="invoice-line ubertrag" id="ubertrag" data-locale="{{ currencyLocale }}" data-currency="{{ invoice.currency }}">
+            <div class="row">
+                <div class="col-6"></div>
+                <div class="col-4 th-gray">
+                    {{ 'report' | t }}
+                </div>
+                <div class="col-2 align-text-bottom total-amount th-gray">
+                    <div class="row h-100">
+                        <div class="currency-on-line col-4">{{ invoice.currency }}</div>
+                        <div class="text-right col-8 amount-value"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+{% endblock %}

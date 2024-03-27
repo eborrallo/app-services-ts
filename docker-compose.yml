@@ -71,7 +71,16 @@ services:
       ELASTICSEARCH_HOSTS: http://codely-elasticsearch:9200
     ports:
       - 5601:5601
-
+  #  krakend:
+  #    image: devopsfaith/krakend:watch
+  #    depends_on:
+  #      - auth-service
+  #      - storage-service
+  #    ports:
+  #      - 3001:3001
+  #    volumes:
+  #      - "./docker/krakend/:/etc/krakend/"
+  #    command: [ "run","-c","krakend.json" ]
 volumes:
   node_modules:
   esdata:
