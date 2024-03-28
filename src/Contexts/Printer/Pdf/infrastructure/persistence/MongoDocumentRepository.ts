@@ -22,7 +22,6 @@ export class MongoDocumentRepository extends MongoRepository<Document> implement
 
   public async search(criteria: Criteria): Promise<Nullable<Document>> {
     const document = await this.searchOneByCriteria<Document>(criteria);
-
     return document ? Document.fromPrimitives(document) : null;
   }
 

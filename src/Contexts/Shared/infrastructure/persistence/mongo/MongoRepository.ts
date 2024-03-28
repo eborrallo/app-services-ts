@@ -35,7 +35,10 @@ export abstract class MongoRepository<T extends AggregateRoot> {
     const collection = await this.collection();
 
     // @ts-expect-error
-    return await collection.find<D>(query.filter, {}).sort(query.sort).skip(query.skip).limit(query.limit).toArray();
+    const responses =   await collection.find<D>(query.filter, {}).sort(query.sort).skip(query.skip).limit(query.limit).toArray();
+
+    // @ts-ignore
+    return responses.map((response) => ({ id: response._id, ...response }));
   }
 
   protected async searchOneByCriteria<D>(criteria: Criteria): Promise<D | null> {
@@ -43,6 +46,8 @@ export abstract class MongoRepository<T extends AggregateRoot> {
 
     const collection = await this.collection();
 
-    return await collection.findOne<D>(query.filter, {});
+    const response = await collection.findOne<D>(query.filter, {});
+    // @ts-ignore
+    return response ? { id: response._id, ...response } : null;
   }
 }

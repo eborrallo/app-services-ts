@@ -3,16 +3,16 @@ services:
     class: ../../../../../Contexts/Shared/infrastructure/WinstonLogger
     arguments: []
 
-#  Printer.Shared.MongoConfig:
-#    factory:
-#      class: ../../../../../Contexts/Printer/Pdf/infrastructure/persistence/MongoConfigFactory
-#      method: 'createConfig'
+  Printer.Shared.MongoConfig:
+    factory:
+      class: ../../../../../Contexts/Printer/Pdf/infrastructure/persistence/MongoConfigFactory
+      method: 'createConfig'
 
-  #  Printer.Shared.ConnectionManager:
-  #    factory:
-  #      class: ../../../../../Contexts/Shared/infrastructure/persistence/mongo/MongoClientFactory
-  #      method: 'createClient'
-  #    arguments: ['backoffice', '@Printer.Shared.MongoConfig']
+  Printer.Shared.MongoConnectionManager:
+    factory:
+      class: ../../../../../Contexts/Shared/infrastructure/persistence/mongo/MongoClientFactory
+      method: 'createClient'
+    arguments: ['backoffice', '@Printer.Shared.MongoConfig']
 
   Printer.Shared.TypeOrmConfig:
     factory:
