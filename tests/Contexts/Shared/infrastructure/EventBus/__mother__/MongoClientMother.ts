@@ -15,6 +15,5 @@ export class MongoClientMother {
     return MongoClientFactory.createClient(connectionName, {
       url: `mongodb://${mongoContainer.getHost()}:${mongoContainer.getMappedPort(27017)}/test1?directConnection=true`
     });
-
   }
 }

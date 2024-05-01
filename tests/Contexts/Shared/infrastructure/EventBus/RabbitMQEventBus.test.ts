@@ -27,27 +27,8 @@ import { RabbitMQConnectionMother } from './__mother__/RabbitMQConnectionMother'
 import { UserCreatedDomainEvent } from '../../../../../src/Contexts/Auth/User/domain/events/UserCreatedDomainEvent';
 import { MongoClientMother } from './__mother__/MongoClientMother';
 import { MongoDBContainer } from '@testcontainers/mongodb';
-/*
 import { GenericContainer, Wait } from 'testcontainers';
-container = await new GenericContainer('rabbitmq:3.8')
-  .withExposedPorts(5672)
-  .withWaitStrategy(Wait.forLogMessage('Server startup complete'))
-  .withStartupTimeout(30_000)
-  .start();
-config = {
-  connectionSettings: {
-    username: 'guest',
-    password: 'guest',
-    vhost: '/',
-    connection: {
-      secure: false,
-      hostname: container.getHost(),
-      port: container.getMappedPort(5672)
-    }
-  },
-  exchangeSettings: { name: '' }
-};
- */
+
 
 describe('RabbitMQEventBus test', () => {
   const exchange = 'test_domain_events';
@@ -56,8 +37,9 @@ describe('RabbitMQEventBus test', () => {
   const mongoContainer = new MongoDBContainer().start();
   const connectionMongo = MongoClientMother.createFromContainer(mongoContainer, 'rabbit');
 
+
   beforeAll(async () => {
-    await mongoContainer;
+    //await mongoContainer;
     arranger = new MongoEnvironmentArranger(connectionMongo);
   });
 
@@ -100,15 +82,24 @@ describe('RabbitMQEventBus test', () => {
     let configurer: RabbitMQConfigurer;
     let failoverPublisher: DomainEventFailoverPublisher;
     let subscribers: DomainEventSubscribers;
+    const rabbitContainer = new GenericContainer('rabbitmq:3.8')
+      .withExposedPorts(5672)
+      .withWaitStrategy(Wait.forLogMessage('Server startup complete'))
+      .withStartupTimeout(60_000)
+      .start();
 
     beforeEach(async () => {
-      connection = await RabbitMQConnectionMother.create();
+      connection = await RabbitMQConnectionMother.createFromContainer(rabbitContainer);
       failoverPublisher = DomainEventFailoverPublisherMother.create(connectionMongo);
       configurer = new RabbitMQConfigurer(connection, queueNameFormatter, 50);
       await arranger.arrange();
       dummySubscriber = new DomainEventSubscriberDummy();
       subscribers = new DomainEventSubscribers([dummySubscriber]);
     });
+
+    afterAll(async () => {
+      await (await rabbitContainer).stop();
+    })
 
     afterEach(async () => {
       await cleanEnvironment();
