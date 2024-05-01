@@ -62,14 +62,14 @@ const cases = [
 beforeEach(async () => {
   await environmentArrangerMongo.arrange();
   await environmentArrangerTypeOrm.arrange();
-}, 30000);
+},10000);
 
 afterAll(async () => {
   await environmentArrangerMongo.close();
   await environmentArrangerTypeOrm.close();
   await (await postgresContainer).stop();
   await (await mongoContainer).stop();
-}, 30000);
+});
 
 // @ts-ignore
 describe.each(cases)('%s', (name: string, sut: UserRepository) => {
