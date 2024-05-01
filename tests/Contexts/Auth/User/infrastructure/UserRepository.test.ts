@@ -9,35 +9,67 @@ import { Filter } from '../../../../../src/Contexts/Shared/domain/criteria/Filte
 import { OrderBy } from '../../../../../src/Contexts/Shared/domain/criteria/OrderBy';
 import { Criteria } from '../../../../../src/Contexts/Shared/domain/criteria/Criteria';
 import { MongoEnvironmentArranger } from '../../../Shared/infrastructure/mongo/MongoEnvironmentArranger';
-import { MongoUserRepository } from '../../../../../src/Contexts/Auth/User/infrastructure/persistence/MongoUserRepository';
-import { MongoClientFactory } from '../../../../../src/Contexts/Shared/infrastructure/persistence/mongo/MongoClientFactory';
-import { TypeOrmClientFactory } from '../../../../../src/Contexts/Shared/infrastructure/persistence/typeorm/TypeOrmClientFactory';
-import { TypeOrmUserRepository } from '../../../../../src/Contexts/Auth/User/infrastructure/persistence/TypeOrmUserRepository';
+import {
+  MongoUserRepository
+} from '../../../../../src/Contexts/Auth/User/infrastructure/persistence/MongoUserRepository';
+import {
+  MongoClientFactory
+} from '../../../../../src/Contexts/Shared/infrastructure/persistence/mongo/MongoClientFactory';
+import {
+  TypeOrmClientFactory
+} from '../../../../../src/Contexts/Shared/infrastructure/persistence/typeorm/TypeOrmClientFactory';
+import {
+  TypeOrmUserRepository
+} from '../../../../../src/Contexts/Auth/User/infrastructure/persistence/TypeOrmUserRepository';
 import { TypeOrmEnvironmentArranger } from '../../../Shared/infrastructure/typeorm/TypeOrmEnvironmentArranger';
 import { UserRepository } from '../../../../../src/Contexts/Auth/User/domain/repositories/UserRepository';
-import container from "../../../../../src/apps/auth/rest/dependency-injection";
+import { PostgreSqlContainer } from '@testcontainers/postgresql';
+import { MongoDBContainer } from '@testcontainers/mongodb';
 
-const connectionMongo = MongoClientFactory.createClient('auth', container.get('Auth.Shared.MongoConfig'));
+const mongoContainer = new MongoDBContainer().start();
+const mongoConnection = async () => {
+  const _container = await mongoContainer;
+
+  return MongoClientFactory.createClient('auth', {
+    url: `mongodb://${_container.getHost()}:${_container.getMappedPort(27017)}/test?directConnection=true`
+  });
+};
+
+const connectionMongo = mongoConnection();
 const sutMongo = new MongoUserRepository(connectionMongo);
 const environmentArrangerMongo = new MongoEnvironmentArranger(connectionMongo);
 
-const connectionTypeOrm = TypeOrmClientFactory.createClient('auth', container.get('Auth.Shared.TypeOrmConfig'));
+const postgresContainer = new PostgreSqlContainer().start();
+
+const postgresConnection = async () => {
+  const _postgresContainer = await postgresContainer;
+  return TypeOrmClientFactory.createClient('auth', {
+    host: '127.0.0.1',
+    port: _postgresContainer.getMappedPort(5432),
+    username: _postgresContainer.getUsername(),
+    password: _postgresContainer.getPassword(),
+    database: _postgresContainer.getDatabase()
+  });
+};
+const connectionTypeOrm = postgresConnection();
 const sutTypeOrm = new TypeOrmUserRepository(connectionTypeOrm);
 const environmentArrangerTypeOrm = new TypeOrmEnvironmentArranger(connectionTypeOrm);
 
 const cases = [
-  ['Mongo', sutMongo],
-  ['TypeOrm', sutTypeOrm]
+  ['TypeOrm', sutTypeOrm],
+  ['Mongo', sutMongo]
 ];
 beforeEach(async () => {
-  await (await environmentArrangerMongo).arrange();
-  await (await environmentArrangerTypeOrm).arrange();
-});
+  await environmentArrangerMongo.arrange();
+  await environmentArrangerTypeOrm.arrange();
+}, 30000);
 
 afterAll(async () => {
-  await (await environmentArrangerMongo).close();
-  await (await environmentArrangerTypeOrm).close();
-});
+  await environmentArrangerMongo.close();
+  await environmentArrangerTypeOrm.close();
+  await (await postgresContainer).stop();
+  await (await mongoContainer).stop();
+}, 30000);
 
 // @ts-ignore
 describe.each(cases)('%s', (name: string, sut: UserRepository) => {
