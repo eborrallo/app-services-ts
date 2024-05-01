@@ -1,18 +1,31 @@
-import {Connection, DataSource} from 'typeorm';
-import { TypeOrmClientFactory } from '../../../../src/Contexts/Shared/infrastructure/persistence/typeorm/TypeOrmClientFactory';
+import { Connection, DataSource } from 'typeorm';
+import {
+  TypeOrmClientFactory
+} from '../../../../src/Contexts/Shared/infrastructure/persistence/typeorm/TypeOrmClientFactory';
+import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
+
+const postgresContainer = new PostgreSqlContainer().start();
 
 describe('TypeOrmClientFactory', () => {
   const factory = TypeOrmClientFactory;
   let client: Connection;
-
+  let container: StartedPostgreSqlContainer;
+  let config: any;
+  beforeAll(async () => {
+    container = await postgresContainer;
+    config = {
+      host: '127.0.0.1',
+      port: container.getMappedPort(5432),
+      username: container.getUsername(),
+      password: container.getPassword(),
+      database: container.getDatabase()
+    };
+  });
+  afterAll(async () => {
+    await container.stop();
+  });
   beforeEach(async () => {
-    client = await factory.createClient('test', {
-      host: 'localhost',
-      port: 5432,
-      username: 'user',
-      password: 'password',
-      database: 'auth'
-    });
+    client = await factory.createClient('test', config);
   });
 
   afterEach(async () => {
@@ -25,13 +38,7 @@ describe('TypeOrmClientFactory', () => {
   });
 
   it('creates a new client if it does not exist a client with the given name', async () => {
-    const newClient = await factory.createClient('test2', {
-      host: 'localhost',
-      port: 5432,
-      username: 'user',
-      password: 'password',
-      database: 'auth'
-    });
+    const newClient = await factory.createClient('test2', config);
 
     expect(newClient).not.toBe(client);
     expect(newClient.isConnected).toBeTruthy();
@@ -40,13 +47,7 @@ describe('TypeOrmClientFactory', () => {
   });
 
   it('returns a client if it already exists', async () => {
-    const newClient = await factory.createClient('test', {
-      host: 'localhost',
-      port: 5432,
-      username: 'user',
-      password: 'password',
-      database: 'auth'
-    });
+    const newClient = await factory.createClient('test', config);
 
     expect(newClient).toBe(client);
     expect(newClient.isConnected).toBeTruthy();

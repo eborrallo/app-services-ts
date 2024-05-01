@@ -1,12 +1,12 @@
 import { DomainEvent } from '../../../../../../src/Contexts/Shared/domain/DomainEvent';
 import { DomainEventFailoverPublisher } from '../../../../../../src/Contexts/Shared/infrastructure/EventBus/DomainEventFailoverPublisher/DomainEventFailoverPublisher';
 import { DomainEventDeserializerMother } from '../__mother__/DomainEventDeserializerMother';
-import { RabbitMQMongoClientMother } from '../__mother__/RabbitMQMongoClientMother';
+import { MongoClientMother } from '../__mother__/MongoClientMother';
 
 export class DomainEventFailoverPublisherDouble extends DomainEventFailoverPublisher {
   private publishMock: jest.Mock;
   constructor() {
-    super(RabbitMQMongoClientMother.create(), DomainEventDeserializerMother.create());
+    super(MongoClientMother.create(), DomainEventDeserializerMother.create());
     this.publishMock = jest.fn();
   }
 

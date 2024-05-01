@@ -12,8 +12,29 @@ import { DomainEventDummyMother } from './__mocks__/DomainEventDummy';
 import { DomainEventSubscriberDummy } from './__mocks__/DomainEventSubscriberDummy';
 import { DomainEventFailoverPublisherMother } from './__mother__/DomainEventFailoverPublisherMother';
 import { RabbitMQConnectionMother } from './__mother__/RabbitMQConnectionMother';
-import { RabbitMQMongoClientMother } from './__mother__/RabbitMQMongoClientMother';
 import {UserCreatedDomainEvent} from "../../../../../src/Contexts/Auth/User/domain/events/UserCreatedDomainEvent";
+import { MongoClientMother } from './__mother__/MongoClientMother';
+/*
+import { GenericContainer, Wait } from 'testcontainers';
+container = await new GenericContainer('rabbitmq:3.8')
+  .withExposedPorts(5672)
+  .withWaitStrategy(Wait.forLogMessage('Server startup complete'))
+  .withStartupTimeout(30_000)
+  .start();
+config = {
+  connectionSettings: {
+    username: 'guest',
+    password: 'guest',
+    vhost: '/',
+    connection: {
+      secure: false,
+      hostname: container.getHost(),
+      port: container.getMappedPort(5672)
+    }
+  },
+  exchangeSettings: { name: '' }
+};
+ */
 
 describe('RabbitMQEventBus test', () => {
   const exchange = 'test_domain_events';
@@ -21,7 +42,7 @@ describe('RabbitMQEventBus test', () => {
   const queueNameFormatter = new RabbitMQQueueFormatter('test');
 
   beforeAll(async () => {
-    arranger = new MongoEnvironmentArranger(RabbitMQMongoClientMother.create());
+    arranger = new MongoEnvironmentArranger(MongoClientMother.create());
   });
 
   beforeEach(async () => {

@@ -8,8 +8,9 @@ import { Filter } from '../../../../../src/Contexts/Shared/domain/criteria/Filte
 import { OrderBy } from '../../../../../src/Contexts/Shared/domain/criteria/OrderBy';
 import { Criteria } from '../../../../../src/Contexts/Shared/domain/criteria/Criteria';
 import { MongoEnvironmentArranger } from '../../../Shared/infrastructure/mongo/MongoEnvironmentArranger';
-import { MongoClientFactory } from '../../../../../src/Contexts/Shared/infrastructure/persistence/mongo/MongoClientFactory';
-import { TypeOrmClientFactory } from '../../../../../src/Contexts/Shared/infrastructure/persistence/typeorm/TypeOrmClientFactory';
+import {
+  TypeOrmClientFactory
+} from '../../../../../src/Contexts/Shared/infrastructure/persistence/typeorm/TypeOrmClientFactory';
 import { TypeOrmEnvironmentArranger } from '../../../Shared/infrastructure/typeorm/TypeOrmEnvironmentArranger';
 import {
   TypeOrmDocumentRepository
@@ -19,13 +20,28 @@ import {
   MongoDocumentRepository
 } from '../../../../../src/Contexts/Printer/Pdf/infrastructure/persistence/MongoDocumentRepository';
 import { DocumentRepository } from '../../../../../src/Contexts/Printer/Pdf/domain/repositories/DocumentRepository';
-import container from '../../../../../src/apps/printer/api/dependency-injection';
+import { MongoDBContainer } from '@testcontainers/mongodb';
+import { PostgreSqlContainer } from '@testcontainers/postgresql';
+import { MongoClientMother } from '../../../Shared/infrastructure/EventBus/__mother__/MongoClientMother';
 
-const connectionMongo = MongoClientFactory.createClient('printer', container.get('Printer.Shared.MongoConfig'));
+const mongoContainer = new MongoDBContainer().start();
+const connectionMongo = MongoClientMother.createFromContainer(mongoContainer, 'printer');
 const sutMongo = new MongoDocumentRepository(connectionMongo);
 const environmentArrangerMongo = new MongoEnvironmentArranger(connectionMongo);
 
-const connectionTypeOrm = TypeOrmClientFactory.createClient('printer', container.get('Printer.Shared.TypeOrmConfig'));
+const postgresContainer = new PostgreSqlContainer().start();
+
+const postgresConnection = async () => {
+  const _postgresContainer = await postgresContainer;
+  return TypeOrmClientFactory.createClient('printer', {
+    host: '127.0.0.1',
+    port: _postgresContainer.getMappedPort(5432),
+    username: _postgresContainer.getUsername(),
+    password: _postgresContainer.getPassword(),
+    database: _postgresContainer.getDatabase()
+  });
+};
+const connectionTypeOrm = postgresConnection();
 const sutTypeOrm = new TypeOrmDocumentRepository(connectionTypeOrm);
 const environmentArrangerTypeOrm = new TypeOrmEnvironmentArranger(connectionTypeOrm);
 
@@ -34,13 +50,15 @@ const cases = [
   ['TypeOrm', sutTypeOrm]
 ];
 beforeEach(async () => {
-  await (await environmentArrangerMongo).arrange();
-  await (await environmentArrangerTypeOrm).arrange();
+  await environmentArrangerMongo.arrange();
+  await environmentArrangerTypeOrm.arrange();
 });
 
 afterAll(async () => {
-  await (await environmentArrangerMongo).close();
-  await (await environmentArrangerTypeOrm).close();
+  await environmentArrangerMongo.close();
+  await environmentArrangerTypeOrm.close();
+  await (await postgresContainer).stop();
+  await (await mongoContainer).stop();
 });
 
 //@ts-ignore

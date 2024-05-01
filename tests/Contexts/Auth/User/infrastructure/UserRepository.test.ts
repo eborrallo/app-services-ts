@@ -13,9 +13,6 @@ import {
   MongoUserRepository
 } from '../../../../../src/Contexts/Auth/User/infrastructure/persistence/MongoUserRepository';
 import {
-  MongoClientFactory
-} from '../../../../../src/Contexts/Shared/infrastructure/persistence/mongo/MongoClientFactory';
-import {
   TypeOrmClientFactory
 } from '../../../../../src/Contexts/Shared/infrastructure/persistence/typeorm/TypeOrmClientFactory';
 import {
@@ -25,17 +22,11 @@ import { TypeOrmEnvironmentArranger } from '../../../Shared/infrastructure/typeo
 import { UserRepository } from '../../../../../src/Contexts/Auth/User/domain/repositories/UserRepository';
 import { PostgreSqlContainer } from '@testcontainers/postgresql';
 import { MongoDBContainer } from '@testcontainers/mongodb';
+import { MongoClientMother } from '../../../Shared/infrastructure/EventBus/__mother__/MongoClientMother';
 
 const mongoContainer = new MongoDBContainer().start();
-const mongoConnection = async () => {
-  const _container = await mongoContainer;
+const connectionMongo = MongoClientMother.createFromContainer(mongoContainer, 'auth');
 
-  return MongoClientFactory.createClient('auth', {
-    url: `mongodb://${_container.getHost()}:${_container.getMappedPort(27017)}/test?directConnection=true`
-  });
-};
-
-const connectionMongo = mongoConnection();
 const sutMongo = new MongoUserRepository(connectionMongo);
 const environmentArrangerMongo = new MongoEnvironmentArranger(connectionMongo);
 
@@ -62,7 +53,7 @@ const cases = [
 beforeEach(async () => {
   await environmentArrangerMongo.arrange();
   await environmentArrangerTypeOrm.arrange();
-},10000);
+});
 
 afterAll(async () => {
   await environmentArrangerMongo.close();
