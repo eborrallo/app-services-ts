@@ -23,6 +23,7 @@ import { UserRepository } from '../../../../../src/Contexts/Auth/User/domain/rep
 import { PostgreSqlContainer } from '@testcontainers/postgresql';
 import { MongoDBContainer } from '@testcontainers/mongodb';
 import { MongoClientMother } from '../../../Shared/infrastructure/EventBus/__mother__/MongoClientMother';
+import { TypeOrmClientMother } from '../../../Shared/infrastructure/EventBus/__mother__/TypeOrmClientMother';
 
 const mongoContainer = new MongoDBContainer().start();
 const connectionMongo = MongoClientMother.createFromContainer(mongoContainer, 'auth');
@@ -31,18 +32,7 @@ const sutMongo = new MongoUserRepository(connectionMongo);
 const environmentArrangerMongo = new MongoEnvironmentArranger(connectionMongo);
 
 const postgresContainer = new PostgreSqlContainer().start();
-
-const postgresConnection = async () => {
-  const _postgresContainer = await postgresContainer;
-  return TypeOrmClientFactory.createClient('auth', {
-    host: '127.0.0.1',
-    port: _postgresContainer.getMappedPort(5432),
-    username: _postgresContainer.getUsername(),
-    password: _postgresContainer.getPassword(),
-    database: _postgresContainer.getDatabase()
-  });
-};
-const connectionTypeOrm = postgresConnection();
+const connectionTypeOrm = TypeOrmClientMother.createFromContainer(postgresContainer, 'auth');
 const sutTypeOrm = new TypeOrmUserRepository(connectionTypeOrm);
 const environmentArrangerTypeOrm = new TypeOrmEnvironmentArranger(connectionTypeOrm);
 

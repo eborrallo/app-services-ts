@@ -23,6 +23,7 @@ import { DocumentRepository } from '../../../../../src/Contexts/Printer/Pdf/doma
 import { MongoDBContainer } from '@testcontainers/mongodb';
 import { PostgreSqlContainer } from '@testcontainers/postgresql';
 import { MongoClientMother } from '../../../Shared/infrastructure/EventBus/__mother__/MongoClientMother';
+import { TypeOrmClientMother } from '../../../Shared/infrastructure/EventBus/__mother__/TypeOrmClientMother';
 
 const mongoContainer = new MongoDBContainer().start();
 const connectionMongo = MongoClientMother.createFromContainer(mongoContainer, 'printer');
@@ -30,18 +31,7 @@ const sutMongo = new MongoDocumentRepository(connectionMongo);
 const environmentArrangerMongo = new MongoEnvironmentArranger(connectionMongo);
 
 const postgresContainer = new PostgreSqlContainer().start();
-
-const postgresConnection = async () => {
-  const _postgresContainer = await postgresContainer;
-  return TypeOrmClientFactory.createClient('printer', {
-    host: '127.0.0.1',
-    port: _postgresContainer.getMappedPort(5432),
-    username: _postgresContainer.getUsername(),
-    password: _postgresContainer.getPassword(),
-    database: _postgresContainer.getDatabase()
-  });
-};
-const connectionTypeOrm = postgresConnection();
+const connectionTypeOrm = TypeOrmClientMother.createFromContainer(postgresContainer,'printer');
 const sutTypeOrm = new TypeOrmDocumentRepository(connectionTypeOrm);
 const environmentArrangerTypeOrm = new TypeOrmEnvironmentArranger(connectionTypeOrm);
 
