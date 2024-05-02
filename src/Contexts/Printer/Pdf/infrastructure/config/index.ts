@@ -1,6 +1,5 @@
 import * as dotenv from 'dotenv';
 import convict from 'convict';
-import process from 'process';
 
 dotenv.config();
 

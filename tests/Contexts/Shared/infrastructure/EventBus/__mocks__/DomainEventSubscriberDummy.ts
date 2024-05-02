@@ -16,7 +16,7 @@ export class DomainEventSubscriberDummy implements DomainEventSubscriber<DomainE
   private alwaysFails = false;
   private alreadyFailed = false;
 
-  constructor(params?: { failsFirstTime?: Boolean; alwaysFails?: Boolean }) {
+  constructor(params?: { failsFirstTime?: boolean; alwaysFails?: boolean }) {
     if (params?.failsFirstTime) {
       this.failsFirstTime = true;
     }

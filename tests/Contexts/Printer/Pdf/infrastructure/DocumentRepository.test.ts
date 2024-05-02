@@ -8,9 +8,6 @@ import { Filter } from '../../../../../src/Contexts/Shared/domain/criteria/Filte
 import { OrderBy } from '../../../../../src/Contexts/Shared/domain/criteria/OrderBy';
 import { Criteria } from '../../../../../src/Contexts/Shared/domain/criteria/Criteria';
 import { MongoEnvironmentArranger } from '../../../Shared/infrastructure/mongo/MongoEnvironmentArranger';
-import {
-  TypeOrmClientFactory
-} from '../../../../../src/Contexts/Shared/infrastructure/persistence/typeorm/TypeOrmClientFactory';
 import { TypeOrmEnvironmentArranger } from '../../../Shared/infrastructure/typeorm/TypeOrmEnvironmentArranger';
 import {
   TypeOrmDocumentRepository

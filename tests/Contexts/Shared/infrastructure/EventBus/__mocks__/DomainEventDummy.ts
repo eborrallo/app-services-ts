@@ -13,7 +13,7 @@ export class DomainEventDummy extends DomainEvent {
     return {};
   }
 
-  static fromPrimitives(params: { aggregateId: string; attributes: {}; eventId: string; occurredOn: Date }) {
+  static fromPrimitives(params: { aggregateId: string; attributes: object; eventId: string; occurredOn: Date }) {
     const { aggregateId, eventId, occurredOn } = params;
     return new DomainEventDummy({
       aggregateId,
