@@ -8,3 +8,7 @@ services:
 
   JwtGenerator:
     class: ../../../../Contexts/Auth/User/domain/services/__mock__/JwtGeneratorMock
+  EthersProvider:
+    factory:
+      class: ../../../../Contexts/Auth/User/infrastructure/apis/LocalBlockchain
+      method: 'get'
