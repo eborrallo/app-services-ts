@@ -53,7 +53,7 @@ const config = convict({
       doc: 'The database host',
       format: String,
       env: 'TYPEORM_HOST',
-      default: 'localhost'
+      default: '127.0.0.1'
     },
     port: {
       doc: 'The database port',
