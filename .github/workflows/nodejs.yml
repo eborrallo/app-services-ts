@@ -85,7 +85,7 @@ jobs:
           node port: 9300
           discovery type: 'single-node'
       - name: Launch Blockchain
-        run: docker build -t local docker/anvil && docker run --rm -p 8545:8545 local
+        run: docker build -t local docker/anvil && docker run -d --rm -p 8545:8545 local
       - name: npm install
         run: npm install
       - name: npm test
