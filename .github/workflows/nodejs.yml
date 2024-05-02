@@ -48,6 +48,8 @@ jobs:
     needs: [ Build ]
     runs-on: ubuntu-latest
     services:
+      hardhat:
+        image: ethereumoptimism/hardhat:latest
       postgres:
         image: postgres
         env:
@@ -97,10 +99,6 @@ jobs:
           host node port: 9300
           node port: 9300
           discovery type: 'single-node'
-      - name: Build Image Anvil
-        run: docker build -t local docker/anvil
-      - name: Run Anvil
-        run: docker run -d --rm -p 8545:8545 local
       - name: npm install
         run: npm install
       - name: npm test
