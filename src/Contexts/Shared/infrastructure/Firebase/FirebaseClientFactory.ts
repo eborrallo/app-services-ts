@@ -1,5 +1,6 @@
 import * as admin from 'firebase-admin';
 import { app } from 'firebase-admin/lib/firebase-namespace-api';
+import { mock } from 'ts-mockito';
 
 export class FirebaseClientFactory {
   static createClient(config: admin.ServiceAccount): app.App | undefined {
@@ -11,5 +12,8 @@ export class FirebaseClientFactory {
     } catch (error) {
       console.error('ERROR', error);
     }
+  }
+  static mockClient(): app.App {
+    return mock<app.App>();
   }
 }

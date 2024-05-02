@@ -12,3 +12,7 @@ services:
     factory:
       class: ../../../../Contexts/Auth/User/infrastructure/apis/LocalBlockchain
       method: 'get'
+  Auth.Shared.Firebase:
+    factory:
+      class: ../../../../Contexts/Shared/infrastructure/Firebase/FirebaseClientFactory
+      method: 'mockClient'
