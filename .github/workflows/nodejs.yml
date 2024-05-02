@@ -50,6 +50,8 @@ jobs:
     services:
       hardhat:
         image: ethereumoptimism/hardhat:latest
+        ports:
+          - 8545:8545
       postgres:
         image: postgres
         env:
