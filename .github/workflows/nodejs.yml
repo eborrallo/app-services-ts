@@ -96,3 +96,5 @@ jobs:
         run: npm install
       - name: npm test
         run: npm run test:features
+        env:
+          TYPEORM_HOST: postgres
