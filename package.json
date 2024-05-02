@@ -17,7 +17,7 @@
     "test:features": "npm run test:auth:features && npm run test:storage:features",
     "test:auth:features": "NODE_ENV=test npx cucumber-js -p auth",
     "test:storage:features": "NODE_ENV=test npx cucumber-js -p storage",
-    "build": "npm run build:clean && npm run build:tsc && npm run build:di",
+    "build": "npm run build:clean && build:proto && npm run build:tsc && npm run build:di",
     "build:tsc": "tsc -p tsconfig.prod.json",
     "build:di": "npx copy 'src/**/*.{json,yaml,html,png,proto}' dist/src",
     "build:clean": "rm -r dist; exit 0",
