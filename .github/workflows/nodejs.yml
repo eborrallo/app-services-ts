@@ -61,11 +61,32 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Up Docker compose
-        run: docker compose up -d
+      - name: Launch MongoDB
+        uses: wbari/start-mongoDB@v0.2
+        with:
+          mongoDBVersion: ${{ matrix.mongodb-version }}
+      - name: Launch RabbitMQ
+        uses: nijel/rabbitmq-action@v1.0.0
+        with:
+          rabbitmq version: ${{ matrix.rabbitmq-version }}
+      - name: Configure sysctl limits
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+      - name: Launch elasticsearch
+        uses: getong/elasticsearch-action@v1.2
+        with:
+          elasticsearch version: ${{ matrix.elasticsearch-version }}
+          host port: 9200
+          container port: 9200
+          host node port: 9300
+          node port: 9300
+          discovery type: 'single-node'
+      - name: Launch Blockchain
+        run: docker build -t local docker/anvil && docker run --rm -p 8545:8545 local
       - name: npm install
         run: npm install
       - name: npm test
         run: npm run test:features
-      - name: Down Docker compose
-        run: docker compose down
