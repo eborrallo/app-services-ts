@@ -12,14 +12,14 @@ describe('PDF should be generated', () => {
   let webClient: Promise<Browser>;
   let logger = mock<Logger>();
   let sut: PuppeteerPdfGenerator;
-  afterAll(() => {
+  beforeAll(() => {
     webClient = WebClientFactory.client();
     logger = mock<Logger>();
     sut = new PuppeteerPdfGenerator(webClient, logger);
   });
-  beforeAll(async () => {
-    await (await webClient).close();
 
+  afterAll(async () => {
+    await (await webClient).close();
   });
   test('should generate PDF event and file should exist', async () => {
     const path = './';
