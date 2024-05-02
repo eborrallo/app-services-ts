@@ -5,14 +5,24 @@ import { mock } from 'ts-mockito';
 import Logger from '../../../../../src/Contexts/Shared/domain/Logger';
 import fs from 'fs';
 import { WebClientFactory } from '../../../../../src/Contexts/Printer/Pdf/infrastructure/services/WebClientFactory';
+import { Browser } from 'puppeteer';
 
 
 describe('PDF should be generated', () => {
-  const webClient = WebClientFactory.client();
-  const logger = mock<Logger>();
-  const sut = new PuppeteerPdfGenerator(webClient, logger);
+  let webClient: Promise<Browser>;
+  let logger = mock<Logger>();
+  let sut: PuppeteerPdfGenerator;
+  afterAll(() => {
+    webClient = WebClientFactory.client();
+    logger = mock<Logger>();
+    sut = new PuppeteerPdfGenerator(webClient, logger);
+  });
+  beforeAll(async () => {
+    await (await webClient).close();
+
+  });
   test('should generate PDF event and file should exist', async () => {
-    const path = './logs/';
+    const path = './';
     const filename = 'test.pdf';
 
     const header = '<header>\n' +
@@ -51,7 +61,6 @@ describe('PDF should be generated', () => {
     await sut.generate(path, filename, header, body, footer, options, correlationId, messageId);
     expect(fs.existsSync(path + filename)).toBe(true);
     fs.unlinkSync(path + filename);
-    await (await webClient).close();
   });
 
 
