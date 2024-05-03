@@ -21,7 +21,7 @@ export class S3Storage implements Storage {
         .promise();
     } catch (err: any) {
       if (err.statusCode === 404) {
-        throw new BucketNotFoundException();
+        throw new BucketNotFoundException((config.get('s3.bucketPrefix') || '') + bucket);
       }
       throw err;
     }

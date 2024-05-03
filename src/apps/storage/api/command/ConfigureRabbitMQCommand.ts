@@ -6,12 +6,12 @@ import container from '../dependency-injection';
 import { RabbitMQConfig } from '../../../../Contexts/Shared/infrastructure/EventBus/RabbitMQ/RabbitMQConfig';
 
 export class ConfigureRabbitMQCommand {
-  static async run() {
+  static async run(config?:any) {
     const connection = container.get<RabbitMQConnection>('Storage.Shared.RabbitMQConnection');
     const nameFormatter = container.get<RabbitMQQueueFormatter>('Storage.Shared.RabbitMQQueueFormatter');
     const { exchangeSettings, retryTtl } = container.get<RabbitMQConfig>('Storage.Shared.RabbitMQConfig');
 
-    await connection.connect();
+    await connection.connect(config);
 
     const configurer = new RabbitMQConfigurer(connection, nameFormatter, retryTtl);
     const subscribers = DomainEventSubscribers.from(container).items;

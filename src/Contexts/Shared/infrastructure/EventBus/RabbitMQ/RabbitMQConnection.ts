@@ -11,7 +11,9 @@ export class RabbitMQConnection {
     this.connectionSettings = params.connectionSettings;
   }
 
-  async connect() {
+  async connect(config?: any) {
+    if (config) this.connectionSettings = config.connectionSettings;
+
     this.connection = await this.amqpConnect();
     this.channel = await this.amqpChannel();
   }
@@ -115,7 +117,7 @@ export class RabbitMQConnection {
 
   async close() {
     await this.channel?.close();
-    return  this.connection?.close();
+    return this.connection?.close();
   }
 
   async consume(queue: string, onMessage: (message: ConsumeMessage) => {}) {

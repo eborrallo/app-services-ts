@@ -23,3 +23,8 @@ services:
     factory:
       class: ../../../../../Contexts/Storage/Document/infrastructure/storages/S3ClientFactory
       method: 'create'
+    arguments: ['@S3Config']
+  S3Config:
+    factory:
+      class: ../../../../../Contexts/Storage/Document/infrastructure/storages/S3ConfigFactory
+      method: 'create'

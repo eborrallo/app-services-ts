@@ -2,9 +2,9 @@ import MongoConfig from '../../../../Shared/infrastructure/persistence/mongo/Mon
 import config from '../config';
 
 export class MongoConfigFactory {
-  static createConfig(): MongoConfig {
+  static createConfig(c?:any): MongoConfig {
     return {
-      url: config.get('mongo.url')
+      url: c??config.get('mongo.url')
     };
   }
 }

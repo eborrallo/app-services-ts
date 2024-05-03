@@ -13,9 +13,6 @@ import {
   MongoUserRepository
 } from '../../../../../src/Contexts/Auth/User/infrastructure/persistence/MongoUserRepository';
 import {
-  TypeOrmClientFactory
-} from '../../../../../src/Contexts/Shared/infrastructure/persistence/typeorm/TypeOrmClientFactory';
-import {
   TypeOrmUserRepository
 } from '../../../../../src/Contexts/Auth/User/infrastructure/persistence/TypeOrmUserRepository';
 import { TypeOrmEnvironmentArranger } from '../../../Shared/infrastructure/typeorm/TypeOrmEnvironmentArranger';

@@ -1,6 +1,6 @@
 export class BucketNotFoundException extends Error {
-  constructor() {
-    const message = 'Bucket not found';
+  constructor(bucketName: string) {
+    const message = 'Bucket not found: ' + bucketName;
     super(message);
     Error.captureStackTrace(this, this.constructor);
 

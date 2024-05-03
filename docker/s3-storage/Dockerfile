@@ -3,3 +3,5 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg |  apt-key add -
 RUN apt update && apt install awscli -y
 
 COPY rootfs-dev/ /
+
+ENTRYPOINT ["/start.sh"]

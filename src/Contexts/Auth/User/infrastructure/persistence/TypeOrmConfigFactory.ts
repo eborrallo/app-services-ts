@@ -2,13 +2,21 @@ import { TypeOrmConfig } from '../../../../Shared/infrastructure/persistence/typ
 import config from '../config';
 
 export class TypeOrmConfigFactory {
-  static createConfig(): TypeOrmConfig {
+  static createConfig(c?: any): TypeOrmConfig {
+    const configTypeOrm = c ?? config.get('typeorm');
+    console.log({
+      host: configTypeOrm.host,
+      port: configTypeOrm.port,
+      username: configTypeOrm.username,
+      password: configTypeOrm.password,
+      database: configTypeOrm.database
+    })
     return {
-      host: config.get('typeorm.host'),
-      port: config.get('typeorm.port'),
-      username: config.get('typeorm.username'),
-      password: config.get('typeorm.password'),
-      database: config.get('typeorm.database')
+      host: configTypeOrm.host,
+      port: configTypeOrm.port,
+      username: configTypeOrm.username,
+      password: configTypeOrm.password,
+      database: configTypeOrm.database
     };
   }
 }
