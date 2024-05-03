@@ -6,7 +6,6 @@ export class TestContainersMother {
 
     const container = await new GenericContainer('ethereumoptimism/hardhat:latest')
       .withExposedPorts(8545)
-      //  .withWaitStrategy(Wait.forLogMessage('Listening on 127.0.0.1:8545'))
       .withWaitStrategy(Wait.forListeningPorts())
       .withStartupTimeout(20_000)
       .start();
