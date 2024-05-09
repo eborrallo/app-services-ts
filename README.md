@@ -7,7 +7,7 @@ alt="typescript-logo"></p>
 > ⚠️ IMPORTANT NOTE:
 >The main goal of this project is how to implement different services in typescript in a single repo (Monolit)
 but with a clear structure and a good practices to split it in Microservices if was necessary . Some of the services are not already finalized, because in a real project the implementation part
-will change to much and the idea is to do only the common part here but the main idea is to show how to implement it.
+will change to much and the idea is to do only the common part here .
 
 The architecture chose and implemented here was DDD  (Domain Driven Design) with a CQRS pattern (Command Query Responsibility Segregation) and Event Sourcing.
 If you know DDD the scaffolding of the project will be very familiar to you. If not I will recommend you to read about it
