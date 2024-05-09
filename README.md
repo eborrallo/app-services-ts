@@ -5,12 +5,12 @@
 alt="typescript-logo"></p>
 
 > ⚠️ IMPORTANT NOTE:
->The main goal of this project is how to implement differents services in typescript in a single repo (Monolit)
-but with a clear structure and a good practices to split it in microservices if was necessary . Some of the services are not allready finallized, because in a real project the implementation part
-will change to much and the idea is to do anlly the common part here but the main idea is to show how to implement it.
+>The main goal of this project is how to implement different services in typescript in a single repo (Monolit)
+but with a clear structure and a good practices to split it in Microservices if was necessary . Some of the services are not already finalized, because in a real project the implementation part
+will change to much and the idea is to do only the common part here but the main idea is to show how to implement it.
 
-The alrchitecture choosed and implemented here was DDD  (Domain Driven Design) with a CQRS pattern (Command Query Responsibility Segregation) and Event Sourcing.
-If you know DDD the schafolding of the project will be very familiar to you. If not i will recommend you to read about it
+The architecture chose and implemented here was DDD  (Domain Driven Design) with a CQRS pattern (Command Query Responsibility Segregation) and Event Sourcing.
+If you know DDD the scaffolding of the project will be very familiar to you. If not I will recommend you to read about it
 before to continue with this project.
 
 Quick list of the stack used in this project:
@@ -21,7 +21,7 @@ Typescript, NodeJs, Express, RabbitMq, MongoDB, TypeOrm, Grpc, Docker, Jest,Ethe
 ## What services we have here?
 
 - **Auth Service**: This service is responsible to manage the users and the authentication process it can manage FIREBASE auth and also Web3 signature auth
-- **Notifier Service**: This service is responsible to manage the notifications to the users or other service that want to notifiy something, it can send emails, sms, push notifications, etc. It is listening with a rabbitMq queue
+- **Notifier Service**: This service is responsible to manage the notifications to the users or other service that want to notify something, it can send emails, sms, push notifications, etc. It is listening with a rabbitMq queue
 - **Printer Service**: This service is responsible to print documents on PDF , editing the template you can print what ever you want . It is listening with a rabbitMq queue and also has one endpoint to test it.
 - **Storage Service**: This service is responsible to store files in a cloud storage, it can store files in all the providers compatible with S3. It is listening with a rabbitMq queue and also has one endpoint to test it.
 ***
@@ -34,7 +34,7 @@ We have the following endpoints using REST API:
 - [POST] /oauth/validate : This endpoint is to validate the token generated in the previous endpoint FIREBASE
 
 Run:
-```typescript
+```bash
 npm run start:auth:api
 ```
 Grpc services:
@@ -45,7 +45,7 @@ The main porpouse of this service is to notify the users or other services when 
 We have not endpoints for this , instead we have some worker process to listen the queue and send the notifications.:
 
 Run:
-```typescript
+```bash
 npm run start:notifier:monitor
 ```
 
@@ -57,7 +57,7 @@ It is listening with a rabbitMq queue and also has one endpoint to test it.
 We have the following endpoints using REST API:
 - [POST] /doc/create : This endpoint is to create a document with a template and some data
 Run:
-```typescript
+```bash
 npm run start:printer:api
 ```
 ***
@@ -68,7 +68,7 @@ It is listening with a rabbitMq queue and also has one endpoint using REST API:
 - [GET] /storage/retrieve/:id : This endpoint is to download a file from the cloud storage
 
 Run:
-```typescript
+```bash
 npm run start:storage:api
 ```
 ***
@@ -108,12 +108,12 @@ npm run start:storage:api
 All the project is dockerized , in the Dockerfile you can see the configuration of each service and also in the docker-compose.yml file
 
 you can run the following command to start all the services:
-```typescript
+```bash
 docker-compose up
 ```
 
 ## Tests
 All the services have tests implemented with Jest and dockerTest, you can run the following command to run the tests:
-```typescript
+```bash
 npm run test
 ```
