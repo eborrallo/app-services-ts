@@ -1,37 +1,53 @@
-# Services in typescript
+# TypeScript Services Implementation
 
 <p align="center">
-<img src="https://www.g-talent.net/cdn/shop/articles/que-es-typescript-1658755532025_47a3ff42-50f3-4968-a9ed-6cca8e24185a.jpg?v=1675279891" align="center"
-alt="typescript-logo"></p>
+    <img src="https://www.g-talent.net/cdn/shop/articles/que-es-typescript-1658755532025_47a3ff42-50f3-4968-a9ed-6cca8e24185a.jpg?v=1675279891" align="center" alt="typescript-logo">
+</p>
 
-> ⚠️ IMPORTANT NOTE:
->The main goal of this project is how to implement different services in typescript in a single repo (Monolit)
-but with a clear structure and a good practices to split it in Microservices if was necessary . Some of the services are not already finalized, because in a real project the implementation part
-will change to much and the idea is to do only the common part here but the main idea is to show how to implement it.
+> ⚠️ **IMPORTANT NOTE:**
+> The main goal of this project is to demonstrate the implementation of different services in TypeScript within a single repository (Monolith), focusing on clear structure and good practices to facilitate potential splitting into Microservices. Some services may not be finalized as real-world implementations may vary significantly. However, the primary aim is to showcase implementation approaches.
 
-The architecture chose and implemented here was DDD  (Domain Driven Design) with a CQRS pattern (Command Query Responsibility Segregation) and Event Sourcing.
-If you know DDD the scaffolding of the project will be very familiar to you. If not I will recommend you to read about it
-before to continue with this project.
+The architecture chosen and implemented here follows Domain Driven Design (DDD) with a CQRS pattern (Command Query Responsibility Segregation) and Event Sourcing. Familiarity with DDD is beneficial for understanding the project structure. If unfamiliar, it's recommended to explore DDD before proceeding.
 
-Quick list of the stack used in this project:
+Quick overview of the technology stack used:
 
-Typescript, NodeJs, Express, RabbitMq, MongoDB, TypeOrm, Grpc, Docker, Jest,Ethers, Web3, Alchemy, Firebase, AWS S3, Axios, ElasticSearch, Puppeteer, Kibana.
+- TypeScript
+- Node.js
+- Express
+- RabbitMQ
+- MongoDB
+- TypeORM
+- gRPC
+- Docker
+- Jest
+- Ethers
+- Web3
+- Alchemy
+- Firebase
+- AWS S3
+- Axios
+- ElasticSearch
+- Puppeteer
+- Kibana
+
 ***
 
-## What services we have here?
+## Services Overview
 
-- **Auth Service**: This service is responsible to manage the users and the authentication process it can manage FIREBASE auth and also Web3 signature auth
-- **Notifier Service**: This service is responsible to manage the notifications to the users or other service that want to notify something, it can send emails, sms, push notifications, etc. It is listening with a rabbitMq queue
-- **Printer Service**: This service is responsible to print documents on PDF , editing the template you can print what ever you want . It is listening with a rabbitMq queue and also has one endpoint to test it.
-- **Storage Service**: This service is responsible to store files in a cloud storage, it can store files in all the providers compatible with S3. It is listening with a rabbitMq queue and also has one endpoint to test it.
+- **Auth Service**: Manages user authentication, supporting FIREBASE and Web3 signature authentication.
+- **Notifier Service**: Handles notifications to users or other services via various channels like email, SMS, and push notifications.
+- **Printer Service**: Prints documents in PDF format based on provided templates.
+- **Storage Service**: Stores files in a cloud storage, compatible with S3 providers.
+
 ***
+
 ## Auth Service
-This main porpouse of this service is had all the users and the authentication process it can manage FIREBASE auth and also Web3 signature auth it has integrated with
-the API of ALCHEMY and FIREBASE , also has a DomainEvent to notify the other services when a user is created.All the persistence is done with a MongoDB(NoSql) and TypeOrm(SQL)  database.
-We have the following endpoints using REST API:
-- [GET] /auth/:address/message : This endpoint is to sign a message with the user address and return a token to use in the other endpoints
-- [POST] /auth/:address/validate : This endpoint is to validate the token generated in the previous endpoint
-- [POST] /oauth/validate : This endpoint is to validate the token generated in the previous endpoint FIREBASE
+
+The Auth Service's primary purpose is user management and authentication, supporting FIREBASE and Web3 signature authentication. It integrates with ALCHEMY and FIREBASE APIs and emits Domain Events for user creation. Persistence is managed using MongoDB (NoSQL) and TypeORM (SQL) databases. REST API endpoints include:
+
+- [GET] `/auth/:address/message`: Signs a message with the user address and returns a token for subsequent endpoints.
+- [POST] `/auth/:address/validate`: Validates the token generated in the previous endpoint.
+- [POST] `/oauth/validate`: Validates the token generated in the previous endpoint using FIREBASE.
 
 Run:
 ```bash
@@ -41,8 +57,9 @@ Grpc services:
  TODO
 ***
 ## Notifier Service
-The main porpouse of this service is to notify the users or other services when something happens, it can send emails, sms, push notifications, etc. It is listening with a rabbitMq queue and also has one endpoint to test it.
-We have not endpoints for this , instead we have some worker process to listen the queue and send the notifications.:
+The Notifier Service notifies users or other services of relevant events through various channels. It listens to a RabbitMQ queue and includes worker processes for sending notifications.
+
+No direct REST API endpoints are available. Instead, worker processes listen to the queue for sending notifications.
 
 Run:
 ```bash
@@ -51,8 +68,7 @@ npm run start:notifier:monitor
 
 ***
 ## Printer Service
-The main porpouse of this service is to print documents on PDF , editing the template you can print what ever you want .
-It is listening with a rabbitMq queue and also has one endpoint to test it.
+The Printer Service generates PDF documents based on provided templates. It listens to a RabbitMQ queue and includes a REST API endpoint for testing.
 
 We have the following endpoints using REST API:
 - [POST] /doc/create : This endpoint is to create a document with a template and some data
@@ -62,8 +78,10 @@ npm run start:printer:api
 ```
 ***
 ## Storage Service
-The main porpouse of this service is to store files in a cloud storage, it can store files in all the providers compatible with S3.
-It is listening with a rabbitMq queue and also has one endpoint using REST API:
+The Storage Service stores files in a cloud storage, compatible with S3 providers. It listens to a RabbitMQ queue and includes REST API endpoints for file management.
+
+REST API endpoints:
+
 - [POST] /storage/upload : This endpoint is to upload a file to the cloud storage
 - [GET] /storage/retrieve/:id : This endpoint is to download a file from the cloud storage
 
